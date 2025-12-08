@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
 
 export default function Navbar() {
   const [theme, setTheme] = useState('light')
+  const navigate = useNavigate()
+  const { user, logout, isAuthenticated } = useUser()
 
   useEffect(() => {
     const htmlElement = document.documentElement
@@ -18,6 +22,11 @@ export default function Navbar() {
     htmlElement.setAttribute('data-theme', newTheme)
   }
 
+  const handleLogout = async () => {
+    await logout()
+    navigate('/')
+  }
+
   return (
     <nav className="navbar bg-base-100 shadow-lg sticky top-0 z-50 justify-between">
       {/* Left: Logo */}
@@ -32,9 +41,42 @@ export default function Navbar() {
       </ul>
 
       {/* Right: Auth & Theme Toggle */}
-      <div className="flex gap-2">
-        <li className="list-none"><a href="/login" className="btn btn-ghost btn-sm">Login</a></li>
-        <li className="list-none"><a href="/signup" className="btn btn-ghost btn-sm">Sign Up</a></li>
+      <div className="flex gap-2 items-center">
+        {isAuthenticated ? (
+          <>
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full bg-primary text-primary-content flex items-center justify-center">
+                  {user?.photoURL ? (
+                    <img src={user.photoURL} alt={user?.displayName} />
+                  ) : (
+                    <span className="font-bold">
+                      {user?.displayName?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li className="menu-title">
+                  <span>{user?.displayName || user?.email}</span>
+                </li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/dashboard/my-lessons">Dashboard</a></li>
+                <li><a href="/dashboard/add-lesson">Add Lesson</a></li>
+                <li><button onClick={handleLogout}>Logout</button></li>
+              </ul>
+            </div>
+          </>
+        ) : (
+          <>
+            <a href="/login" className="btn btn-ghost btn-sm">Login</a>
+            <a href="/register" className="btn btn-primary btn-sm">Sign Up</a>
+          </>
+        )}
+        
         <button
           onClick={toggleTheme}
           className="btn btn-square btn-ghost"
