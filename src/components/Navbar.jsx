@@ -5,7 +5,7 @@ import { useUser } from '../context/UserContext'
 export default function Navbar() {
   const [theme, setTheme] = useState('light')
   const navigate = useNavigate()
-  const { user, logout, isAuthenticated } = useUser()
+  const { user, logout, isAuthenticated, loading } = useUser()
 
   useEffect(() => {
     const htmlElement = document.documentElement
@@ -28,29 +28,31 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar bg-base-100 shadow-lg sticky top-0 z-50 justify-between">
+    <nav className="navbar bg-gradient-to-r from-primary to-primary/80 shadow-lg sticky top-0 z-50 justify-between h-20">
       {/* Left: Logo */}
-      <Link to="/" className="btn btn-ghost normal-case text-xl font-bold">
+      <Link to="/" className="btn btn-ghost normal-case text-2xl font-bold text-primary-content hover:bg-white/10">
         📚 DLL
       </Link>
 
       {/* Center: Menu */}
       <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/public-lessons">Public Lessons</Link></li>
+        <li><Link to="/" className="text-primary-content font-semibold hover:bg-white/10">Home</Link></li>
+        <li><Link to="/public-lessons" className="text-primary-content font-semibold hover:bg-white/10">Public Lessons</Link></li>
       </ul>
 
       {/* Right: Auth & Theme Toggle */}
-      <div className="flex gap-2 items-center">
-        {isAuthenticated ? (
+      <div className="flex gap-3 items-center">
+        {loading ? (
+          <span className="loading loading-spinner loading-sm text-primary-content"></span>
+        ) : isAuthenticated ? (
           <>
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                <div className="w-10 rounded-full bg-primary text-primary-content flex items-center justify-center">
+              <div tabIndex={0} className="btn btn-ghost btn-circle avatar w-12 h-12 border-2 border-primary-content/30 hover:border-primary-content/60">
+                <div className="w-10 rounded-full bg-white/20 text-primary-content flex items-center justify-center overflow-hidden">
                   {user?.photoURL ? (
                     <img src={user.photoURL} alt={user?.displayName} />
                   ) : (
-                    <span className="font-bold">
+                    <span className="font-bold text-lg">
                       {user?.displayName?.charAt(0).toUpperCase() || 'U'}
                     </span>
                   )}
@@ -58,10 +60,10 @@ export default function Navbar() {
               </div>
               <ul
                 tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-xl w-56"
               >
                 <li className="menu-title">
-                  <span>{user?.displayName || user?.email}</span>
+                  <span className="font-bold text-base">{user?.displayName || user?.email}</span>
                 </li>
                 <li><Link to="/profile">Profile</Link></li>
                 <li><Link to="/dashboard/my-lessons">Dashboard</Link></li>
@@ -72,14 +74,14 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
-            <Link to="/register" className="btn btn-primary btn-sm">Sign Up</Link>
+            <Link to="/login" className="btn btn-ghost btn-sm h-10 text-primary-content font-semibold hover:bg-white/10">Login</Link>
+            <Link to="/register" className="btn btn-sm h-10 font-semibold bg-white text-primary hover:bg-white/90">Sign Up</Link>
           </>
         )}
         
         <button
           onClick={toggleTheme}
-          className="btn btn-square btn-ghost"
+          className="btn btn-ghost btn-circle w-12 h-12 text-primary-content hover:bg-white/10"
           aria-label="Toggle theme"
         >
           {theme === 'light' ? (
