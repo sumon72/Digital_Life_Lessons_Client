@@ -61,6 +61,7 @@ export default function Navbar() {
       <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2">
         <li><Link to="/" className={`font-semibold ${textColor} ${linkHover}`}>Home</Link></li>
         <li><Link to="/public-lessons" className={`font-semibold ${textColor} ${linkHover}`}>Public Lessons</Link></li>
+        <li><Link to="/dashboard" className={`font-semibold ${textColor} ${linkHover}`}>Dashboard</Link></li>
       </ul>
 
       {/* Right: Auth & Theme Toggle */}
@@ -89,8 +90,6 @@ export default function Navbar() {
                   <span className="font-bold text-base">{user?.displayName || user?.email}</span>
                 </li>
                 <li><Link to="/profile">Profile</Link></li>
-                <li><Link to="/dashboard/my-lessons">Dashboard</Link></li>
-                <li><Link to="/dashboard/add-lesson">Add Lesson</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </ul>
             </div>

@@ -5,6 +5,11 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Profile from '../pages/Profile'
 import ProtectedRoute from '../components/ProtectedRoute'
+import Dashboard from '../pages/admin/Dashboard'
+import ManageLessons from '../pages/admin/ManageLessons'
+import ManageUsers from '../pages/admin/ManageUsers'
+import Analytics from '../pages/admin/Analytics'
+import Settings from '../pages/admin/Settings'
 
 export const router = createBrowserRouter([
   {
@@ -26,19 +31,26 @@ export const router = createBrowserRouter([
         path: '/profile',
         element: <ProtectedRoute><Profile /></ProtectedRoute>,
       },
-      // Protected routes will be added below
-      // {
-      //   path: '/dashboard',
-      //   element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
-      // },
-      // {
-      //   path: '/dashboard/my-lessons',
-      //   element: <ProtectedRoute><MyLessons /></ProtectedRoute>,
-      // },
-      // {
-      //   path: '/dashboard/add-lesson',
-      //   element: <ProtectedRoute><AddLesson /></ProtectedRoute>,
-      // },
+      {
+        path: '/dashboard',
+        element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+      },
+      {
+        path: '/dashboard/lessons',
+        element: <ProtectedRoute><ManageLessons /></ProtectedRoute>,
+      },
+      {
+        path: '/dashboard/users',
+        element: <ProtectedRoute><ManageUsers /></ProtectedRoute>,
+      },
+      {
+        path: '/dashboard/analytics',
+        element: <ProtectedRoute><Analytics /></ProtectedRoute>,
+      },
+      {
+        path: '/dashboard/settings',
+        element: <ProtectedRoute><Settings /></ProtectedRoute>,
+      },
     ],
   },
 ])
