@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 
 export default function Navbar() {
@@ -30,14 +30,14 @@ export default function Navbar() {
   return (
     <nav className="navbar bg-base-100 shadow-lg sticky top-0 z-50 justify-between">
       {/* Left: Logo */}
-      <a href="/" className="btn btn-ghost normal-case text-xl font-bold">
+      <Link to="/" className="btn btn-ghost normal-case text-xl font-bold">
         📚 DLL
-      </a>
+      </Link>
 
       {/* Center: Menu */}
       <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2">
-        <li><a href="/">Home</a></li>
-        <li><a href="/public-lessons">Public Lessons</a></li>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/public-lessons">Public Lessons</Link></li>
       </ul>
 
       {/* Right: Auth & Theme Toggle */}
@@ -63,17 +63,17 @@ export default function Navbar() {
                 <li className="menu-title">
                   <span>{user?.displayName || user?.email}</span>
                 </li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/dashboard/my-lessons">Dashboard</a></li>
-                <li><a href="/dashboard/add-lesson">Add Lesson</a></li>
+                <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/dashboard/my-lessons">Dashboard</Link></li>
+                <li><Link to="/dashboard/add-lesson">Add Lesson</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </ul>
             </div>
           </>
         ) : (
           <>
-            <a href="/login" className="btn btn-ghost btn-sm">Login</a>
-            <a href="/register" className="btn btn-primary btn-sm">Sign Up</a>
+            <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
+            <Link to="/register" className="btn btn-primary btn-sm">Sign Up</Link>
           </>
         )}
         
