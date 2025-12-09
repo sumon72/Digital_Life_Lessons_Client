@@ -36,7 +36,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
       },
       {
-        path: '/dashboard/lessons',
+        path: '/managelessons',
         element: <ProtectedRoute><ManageLessons /></ProtectedRoute>,
       },
       {

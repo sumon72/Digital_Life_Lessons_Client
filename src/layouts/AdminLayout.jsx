@@ -28,7 +28,7 @@ export default function AdminLayout({ children }) {
 
   const navItems = [
     { icon: '📊', label: 'Dashboard', path: '/dashboard' },
-    { icon: '📚', label: 'Manage Lessons', path: '/dashboard/lessons' },
+    { icon: '📚', label: 'Manage Lessons', path: '/managelessons' },
     { icon: '👥', label: 'Manage Users', path: '/dashboard/users' },
     { icon: '📈', label: 'Analytics', path: '/dashboard/analytics' },
     { icon: '⚙️', label: 'Settings', path: '/dashboard/settings' }
