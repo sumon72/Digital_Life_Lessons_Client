@@ -60,6 +60,12 @@ export default function ManageUsers() {
 
   // CRUD: UPDATE
   const handleEdit = (user) => {
+    // Prevent editing the main admin user
+    if (user.email === 'admin@gmail.com') {
+      toast.error('Cannot edit the main admin account')
+      return
+    }
+    
     setModalMode('edit')
     setSelectedUser(user)
     setFormData(user)
@@ -68,6 +74,14 @@ export default function ManageUsers() {
 
   // CRUD: DELETE
   const handleDelete = async (id) => {
+    const user = users.find(u => u._id === id)
+    
+    // Prevent deleting the main admin user
+    if (user?.email === 'admin@gmail.com') {
+      toast.error('Cannot delete the main admin account')
+      return
+    }
+    
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -95,6 +109,13 @@ export default function ManageUsers() {
   // Handle role change
   const handleRoleChange = async (userId, newRole) => {
     const user = users.find(u => u._id === userId)
+    
+    // Prevent changing role of main admin user
+    if (user?.email === 'admin@gmail.com') {
+      toast.error('Cannot change the role of the main admin account')
+      return
+    }
+    
     const loadingToast = toast.loading('Updating role...')
     try {
       const response = await api.put(`/users/${userId}`, {
@@ -300,15 +321,19 @@ export default function ManageUsers() {
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeColor(user.role)}`}>
                             {user.role?.toUpperCase() || 'USER'}
                           </span>
-                          <select
-                            value={user.role || 'user'}
-                            onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                            className="text-xs px-2 py-1 border rounded cursor-pointer"
-                          >
-                            <option value="user">User</option>
-                            <option value="moderator">Moderator</option>
-                            <option value="admin">Admin</option>
-                          </select>
+                          {user.email === 'admin@gmail.com' ? (
+                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-500 rounded">Protected</span>
+                          ) : (
+                            <select
+                              value={user.role || 'user'}
+                              onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                              className="text-xs px-2 py-1 border rounded cursor-pointer"
+                            >
+                              <option value="user">User</option>
+                              <option value="moderator">Moderator</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-500">{user.createdAt?.split('T')[0] || 'N/A'}</td>
@@ -322,13 +347,25 @@ export default function ManageUsers() {
                         </button>
                         <button
                           onClick={() => handleEdit(user)}
-                          className="btn btn-sm btn-outline btn-primary"
+                          className={`btn btn-sm btn-outline ${
+                            user.email === 'admin@gmail.com' 
+                              ? 'btn-disabled opacity-50 cursor-not-allowed' 
+                              : 'btn-primary'
+                          }`}
+                          disabled={user.email === 'admin@gmail.com'}
+                          title={user.email === 'admin@gmail.com' ? 'Protected account' : 'Edit'}
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className="btn btn-sm btn-outline text-red-600 hover:bg-red-50"
+                          className={`btn btn-sm btn-outline ${
+                            user.email === 'admin@gmail.com'
+                              ? 'btn-disabled opacity-50 cursor-not-allowed'
+                              : 'text-red-600 hover:bg-red-50'
+                          }`}
+                          disabled={user.email === 'admin@gmail.com'}
+                          title={user.email === 'admin@gmail.com' ? 'Protected account' : 'Delete'}
                         >
                           Delete
                         </button>

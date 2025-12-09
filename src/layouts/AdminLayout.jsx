@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
 
 export default function AdminLayout({ children }) {
   const [theme, setTheme] = useState('light')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const location = useLocation()
+  const { user } = useUser()
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -26,13 +28,18 @@ export default function AdminLayout({ children }) {
   const activeBg = isDark ? 'bg-slate-800 text-primary' : 'bg-gray-100 text-primary'
   const inactiveBg = isDark ? 'hover:bg-slate-800' : 'hover:bg-gray-50'
 
+  const isAdmin = user?.role === 'admin'
+
   const navItems = [
-    { icon: '📊', label: 'Dashboard', path: '/dashboard' },
-    { icon: '📚', label: 'Manage Lessons', path: '/managelessons' },
-    { icon: '👥', label: 'Manage Users', path: '/dashboard/users' },
-    { icon: '📈', label: 'Analytics', path: '/dashboard/analytics' },
-    { icon: '⚙️', label: 'Settings', path: '/dashboard/settings' }
+    { icon: '📊', label: 'Dashboard', path: '/dashboard', adminOnly: false },
+    { icon: '📚', label: 'Manage Lessons', path: '/managelessons', adminOnly: false },
+    { icon: '👥', label: 'Manage Users', path: '/dashboard/users', adminOnly: true },
+    { icon: '📈', label: 'Analytics', path: '/dashboard/analytics', adminOnly: false },
+    { icon: '⚙️', label: 'Settings', path: '/dashboard/settings', adminOnly: true }
   ]
+
+  // Filter nav items based on user role
+  const visibleNavItems = navItems.filter(item => !item.adminOnly || isAdmin)
 
   const isActive = (path) => {
     if (path === '/dashboard') return location.pathname === '/dashboard'
@@ -52,7 +59,7 @@ export default function AdminLayout({ children }) {
 
         {/* Navigation */}
         <nav className="mt-6 space-y-2 px-3">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}

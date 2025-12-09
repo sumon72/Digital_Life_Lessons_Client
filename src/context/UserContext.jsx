@@ -107,18 +107,40 @@ export const UserProvider = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      // Fetch updated user data from MongoDB (single source of truth)
-      const response = await api.get('/users');
-      const updatedUser = response.data.find(u => u.email === user?.email);
-      
-      if (updatedUser) {
-        setUser(updatedUser);
-        setUserPlan({
-          isPremium: updatedUser.isPremium || false,
-          premiumActivatedAt: updatedUser.premiumActivatedAt || null
-        });
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        console.log('✓ User plan refreshed from MongoDB:', updatedUser.email, '| Premium:', updatedUser.isPremium || false);
+      // For regular users, fetch from backend and find by email
+      // For admin users trying to refresh, we need a different approach
+      if (user?.role === 'admin') {
+        // Admin user - fetch their own data differently to avoid permission issues
+        const response = await api.get(`/users/${user._id}`);
+        const updatedUser = response.data;
+        
+        if (updatedUser) {
+          setUser(updatedUser);
+          setUserPlan({
+            isPremium: updatedUser.isPremium || false,
+            premiumActivatedAt: updatedUser.premiumActivatedAt || null
+          });
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          console.log('✓ Admin user plan refreshed from MongoDB:', updatedUser.email, '| Premium:', updatedUser.isPremium || false);
+        }
+      } else {
+        // Regular user - try to fetch user by their own ID first
+        try {
+          const response = await api.get(`/users/${user._id}`);
+          const updatedUser = response.data;
+          
+          if (updatedUser) {
+            setUser(updatedUser);
+            setUserPlan({
+              isPremium: updatedUser.isPremium || false,
+              premiumActivatedAt: updatedUser.premiumActivatedAt || null
+            });
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            console.log('✓ User plan refreshed from MongoDB:', updatedUser.email, '| Premium:', updatedUser.isPremium || false);
+          }
+        } catch (err) {
+          console.error('Failed to refresh user data:', err);
+        }
       }
     } catch (err) {
       console.error('Failed to refresh user data:', err);

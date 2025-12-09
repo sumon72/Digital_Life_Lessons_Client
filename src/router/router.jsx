@@ -9,6 +9,7 @@ import Pricing from '../pages/Pricing'
 import PaymentSuccess from '../pages/PaymentSuccess'
 import PaymentCancel from '../pages/PaymentCancel'
 import ProtectedRoute from '../components/ProtectedRoute'
+import AdminRoute from '../components/AdminRoute'
 import Dashboard from '../pages/admin/Dashboard'
 import ManageLessons from '../pages/admin/ManageLessons'
 import ManageUsers from '../pages/admin/ManageUsers'
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/dashboard/users',
-        element: <ProtectedRoute><ManageUsers /></ProtectedRoute>,
+        element: <ProtectedRoute><AdminRoute><ManageUsers /></AdminRoute></ProtectedRoute>,
       },
       {
         path: '/dashboard/analytics',
@@ -69,7 +70,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/dashboard/settings',
-        element: <ProtectedRoute><Settings /></ProtectedRoute>,
+        element: <ProtectedRoute><AdminRoute><Settings /></AdminRoute></ProtectedRoute>,
       },
     ],
   },
