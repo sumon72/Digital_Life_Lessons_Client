@@ -20,6 +20,7 @@ export default function AddLesson() {
     authorName: '',
     authorPhotoURL: '',
     accessLevel: 'free',
+    privacy: 'private',
     status: 'draft' 
   })
   const [loading, setLoading] = useState(true)
@@ -28,6 +29,7 @@ export default function AddLesson() {
   const categories = ['Personal', 'Work', 'Relationships', 'Health', 'Finance', 'Education', 'Spirituality']
   const tones = ['Happy', 'Sad', 'Motivated', 'Reflective', 'Hopeful', 'Angry', 'Grateful']
   const accessLevels = ['free', 'premium']
+  const privacyOptions = ['private', 'public']
 
   const filteredLessons = filter === 'all' ? lessons : lessons.filter(l => l.status === filter)
 
@@ -65,6 +67,7 @@ export default function AddLesson() {
       authorName: '',
       authorPhotoURL: '',
       accessLevel: 'free',
+      privacy: 'private',
       status: 'draft' 
     })
     setSelectedLesson(null)
@@ -136,6 +139,7 @@ export default function AddLesson() {
           authorName: formData.authorName,
           authorPhotoURL: formData.authorPhotoURL,
           accessLevel: formData.accessLevel,
+          privacy: formData.privacy,
           status: formData.status
         })
         console.log('Create response:', response.data)
@@ -151,6 +155,7 @@ export default function AddLesson() {
           authorName: '',
           authorPhotoURL: '',
           accessLevel: 'free',
+          privacy: 'private',
           status: 'draft' 
         })
         toast.success('Lesson added successfully', { id: loadingToast })
@@ -166,6 +171,7 @@ export default function AddLesson() {
           authorName: formData.authorName,
           authorPhotoURL: formData.authorPhotoURL,
           accessLevel: formData.accessLevel,
+          privacy: formData.privacy,
           status: formData.status
         })
         console.log('Update response:', response.data)
@@ -181,6 +187,7 @@ export default function AddLesson() {
           authorName: '',
           authorPhotoURL: '',
           accessLevel: 'free',
+          privacy: 'private',
           status: 'draft' 
         })
         toast.success('Lesson updated successfully', { id: loadingToast })
@@ -423,13 +430,19 @@ export default function AddLesson() {
                       <p className="text-gray-900">{formData.accessLevel === 'premium' ? '⭐ Premium' : '🌍 Free'}</p>
                     </div>
                     <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">Privacy</label>
+                      <p className="text-gray-900">{formData.privacy === 'public' ? '🌍 Public' : '🔒 Private'}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                       <p className="text-gray-900 capitalize">{formData.status}</p>
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Creator Name</label>
-                    <p className="text-gray-900">{formData.authorName || 'N/A'}</p>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">Creator Name</label>
+                      <p className="text-gray-900">{formData.authorName || 'N/A'}</p>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Content</label>
@@ -539,6 +552,24 @@ export default function AddLesson() {
                       </select>
                     </div>
                     <div>
+                      <label className="block text-sm font-semibold mb-2">Privacy</label>
+                      <select
+                        name="privacy"
+                        value={formData.privacy}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        {privacyOptions.map(option => (
+                          <option key={option} value={option}>
+                            {option === 'public' ? '🌍 Public' : '🔒 Private'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
                       <label className="block text-sm font-semibold mb-2">Status</label>
                       <select
                         name="status"
@@ -550,19 +581,18 @@ export default function AddLesson() {
                         <option value="published">Published</option>
                       </select>
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Author (Legacy) *</label>
-                    <input
-                      type="text"
-                      name="author"
-                      value={formData.author}
-                      onChange={handleChange}
-                      placeholder="Author name"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                      required
-                    />
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Author (Legacy) *</label>
+                      <input
+                        type="text"
+                        name="author"
+                        value={formData.author}
+                        onChange={handleChange}
+                        placeholder="Author name"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div>

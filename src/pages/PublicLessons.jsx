@@ -29,12 +29,24 @@ export default function PublicLessons() {
     try {
       setLoading(true)
       const response = await api.get('/lessons')
+      console.log('All lessons from API:', response.data)
+      console.log('Total lessons count:', response.data?.length || 0)
       
       // Filter only public lessons
-      const publicLessons = response.data.filter(lesson => 
-        lesson.privacy === 'public' || lesson.privacy === 'Public'
-      )
+      // Logic: Show a lesson if:
+      // 1. It has privacy='public' (new lessons explicitly marked public), OR
+      // 2. It has no privacy field AND status='published' (existing published lessons)
+      const publicLessons = (response.data || []).filter(lesson => {
+        console.log(`Checking lesson: ${lesson.title}, privacy: ${lesson.privacy}, status: ${lesson.status}`)
+        const isExplicitlyPublic = lesson.privacy === 'public' || lesson.privacy === 'Public'
+        const isLegacyPublished = !lesson.privacy && lesson.status === 'published'
+        const include = isExplicitlyPublic || isLegacyPublished
+        console.log(`  → Include: ${include}`)
+        return include
+      })
       
+      console.log('Filtered public lessons:', publicLessons)
+      console.log(`Showing ${publicLessons.length} out of ${response.data?.length || 0} lessons`)
       setLessons(publicLessons)
     } catch (err) {
       console.error('Error fetching public lessons:', err)
