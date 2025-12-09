@@ -15,7 +15,7 @@ export default function Login() {
 
   // Redirect if already logged in
   if (user) {
-    navigate('/dashboard/my-lessons')
+    navigate('/dashboard')
   }
 
   const handleLogin = async (e) => {
@@ -27,7 +27,7 @@ export default function Login() {
       const result = await signInWithEmailAndPassword(auth, email, password)
       const token = await result.user.getIdToken()
       localStorage.setItem('authToken', token)
-      navigate('/dashboard/my-lessons')
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {

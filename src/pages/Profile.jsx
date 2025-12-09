@@ -173,18 +173,6 @@ export default function Profile() {
 
                 <div className="form-control">
                   <label className="label pb-2">
-                    <span className="label-text font-semibold text-lg text-base-content">User ID</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered bg-base-200 text-base font-mono text-sm"
-                    value={user.uid}
-                    disabled
-                  />
-                </div>
-
-                <div className="form-control">
-                  <label className="label pb-2">
                     <span className="label-text font-semibold text-lg text-base-content">Profile Picture URL</span>
                   </label>
                   <input

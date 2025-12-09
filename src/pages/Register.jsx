@@ -17,7 +17,7 @@ export default function Register() {
 
   // Redirect if already logged in
   if (user) {
-    navigate('/dashboard/my-lessons')
+    navigate('/dashboard')
   }
 
   const handleRegister = async (e) => {
@@ -47,7 +47,7 @@ export default function Register() {
 
       const token = await result.user.getIdToken()
       localStorage.setItem('authToken', token)
-      navigate('/dashboard/my-lessons')
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {

@@ -31,7 +31,6 @@ export default function ManageLessons() {
     } catch (err) {
       const errorMsg = 'Failed to fetch lessons: ' + (err.response?.data?.error || err.message)
       setError(errorMsg)
-      toast.error(errorMsg)
       console.error('Error fetching lessons:', err)
     } finally {
       setLoading(false)
@@ -81,10 +80,9 @@ export default function ManageLessons() {
         await api.delete(`/lessons/${id}`)
         setLessons(lessons.filter(l => l._id !== id))
         toast.success('Lesson deleted successfully', { id: loadingToast })
- 
       } catch (err) {
         toast.error('Failed to delete lesson: ' + (err.response?.data?.error || err.message), { id: loadingToast })
-
+        console.error('Error deleting lesson:', err)
       }
     }
   }
@@ -130,14 +128,7 @@ export default function ManageLessons() {
       }
     } catch (err) {
       console.error('Error:', err.response?.data || err.message)
-      toast.error('Failed to save lesson: ' + (err.response?.data?.error || err.message), { id: loadingToast })
-      
-      Swal.fire({
-        title: 'Error!',
-        text: err.response?.data?.error || 'Failed to save the lesson.',
-        icon: 'error',
-        confirmButtonColor: '#EF4444'
-      })
+      toast.error(err.response?.data?.error || 'Failed to save the lesson.', { id: loadingToast })
     }
   }
 

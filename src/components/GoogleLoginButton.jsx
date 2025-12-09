@@ -22,7 +22,7 @@ export default function GoogleLoginButton() {
       localStorage.setItem('authToken', token)
       
       // Redirect to dashboard or home
-      navigate('/dashboard/my-lessons')
+      navigate('/dashboard')
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user') {
         setError('Google login cancelled')
