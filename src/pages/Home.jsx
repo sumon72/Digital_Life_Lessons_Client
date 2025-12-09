@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../config/api'
 
 const sampleFeatured = [
   { id: 1, title: 'How to Navigate Tough Conversations', excerpt: 'Practical methods to stay calm and be heard.', author: 'A. Rivera', saved: 124 },
@@ -110,35 +111,24 @@ export default function Home() {
     let mounted = true
     async function fetchAll() {
       try {
-        const [fRes, cRes, mRes] = await Promise.allSettled([
-          fetch('/api/lessons/featured'),
-          fetch('/api/contributors/top-week'),
-          fetch('/api/lessons/most-saved')
-        ])
-
+        // Fetch lessons from the backend
+        const lessonsRes = await api.get('/lessons')
+        
         if (!mounted) return
 
-        if (fRes.status === 'fulfilled' && fRes.value.ok) {
-          const j = await fRes.value.json()
-          setFeatured(j || sampleFeatured)
+        if (lessonsRes.status === 200 && lessonsRes.data) {
+          // Get published lessons and take first 3 as featured
+          const publishedLessons = lessonsRes.data.filter(lesson => lesson.status === 'published')
+          setFeatured(publishedLessons.slice(0, 3).length > 0 ? publishedLessons.slice(0, 3) : sampleFeatured)
         } else {
           setFeatured(sampleFeatured)
         }
 
-        if (cRes.status === 'fulfilled' && cRes.value.ok) {
-          const j = await cRes.value.json()
-          setContributors(j || sampleContributors)
-        } else {
-          setContributors(sampleContributors)
-        }
-
-        if (mRes.status === 'fulfilled' && mRes.value.ok) {
-          const j = await mRes.value.json()
-          setMostSaved(j || sampleMostSaved)
-        } else {
-          setMostSaved(sampleMostSaved)
-        }
+        // Use sample data for contributors and most saved for now
+        setContributors(sampleContributors)
+        setMostSaved(sampleMostSaved)
       } catch (e) {
+        console.error('Error fetching lessons:', e)
         setFeatured(sampleFeatured)
         setContributors(sampleContributors)
         setMostSaved(sampleMostSaved)
@@ -166,15 +156,15 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featured.map(f => (
-              <article key={f.id} className="p-6 bg-base-100 rounded-lg shadow hover:shadow-md transition">
+              <article key={f._id} className="p-6 bg-base-100 rounded-lg shadow hover:shadow-md transition">
                 <h4 className="text-lg font-semibold">{f.title}</h4>
-                <p className="mt-2 text-sm text-neutral-600">{f.excerpt}</p>
+                <p className="mt-2 text-sm text-neutral-600 line-clamp-2">{f.content}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <div className="text-sm text-neutral-500">By {f.author}</div>
-                  <div className="text-sm text-neutral-500">Saved {f.saved}</div>
+                  <div className="badge badge-sm">{f.status}</div>
                 </div>
                 <div className="mt-4">
-                  <Link to={`/lessons/${f.id}`} className="btn btn-outline btn-sm">Read</Link>
+                  <Link to={`/lessons/${f._id}`} className="btn btn-outline btn-sm">Read</Link>
                 </div>
               </article>
             ))}

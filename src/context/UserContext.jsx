@@ -10,6 +10,7 @@ const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [userPlan, setUserPlan] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'))
@@ -18,7 +19,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // User is signed in - create/get user in backend with JWT tokens
+        // User is signed in - sync with backend (MongoDB is single source of truth)
         try {
           const response = await api.post('/users', {
             email: currentUser.email,
@@ -26,14 +27,23 @@ export const UserProvider = ({ children }) => {
             photoURL: currentUser.photoURL || '',
           });
 
-          setUser(response.data.user);
+          // Always use the user data from MongoDB (single source of truth)
+          const backendUser = response.data.user;
+          
+          setUser(backendUser);
+          setUserPlan({
+            isPremium: backendUser?.isPremium || false,
+            premiumActivatedAt: backendUser?.premiumActivatedAt || null
+          });
           setAccessToken(response.data.accessToken);
           setRefreshToken(response.data.refreshToken);
 
           // Store tokens in localStorage
           localStorage.setItem('accessToken', response.data.accessToken);
           localStorage.setItem('refreshToken', response.data.refreshToken);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.setItem('user', JSON.stringify(backendUser));
+          
+          console.log('✓ User synced from MongoDB:', backendUser.email, '| Premium:', backendUser?.isPremium || false);
         } catch (err) {
           console.error('Failed to sync user with backend:', err);
           setError(err.message);
@@ -42,6 +52,7 @@ export const UserProvider = ({ children }) => {
       } else {
         // User is signed out
         setUser(null);
+        setUserPlan(null);
         setAccessToken(null);
         setRefreshToken(null);
         localStorage.removeItem('accessToken');
@@ -61,6 +72,7 @@ export const UserProvider = ({ children }) => {
     try {
       await signOut(auth);
       setUser(null);
+      setUserPlan(null);
       setAccessToken(null);
       setRefreshToken(null);
       setError(null);
@@ -93,11 +105,33 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      // Fetch updated user data from MongoDB (single source of truth)
+      const response = await api.get('/users');
+      const updatedUser = response.data.find(u => u.email === user?.email);
+      
+      if (updatedUser) {
+        setUser(updatedUser);
+        setUserPlan({
+          isPremium: updatedUser.isPremium || false,
+          premiumActivatedAt: updatedUser.premiumActivatedAt || null
+        });
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        console.log('✓ User plan refreshed from MongoDB:', updatedUser.email, '| Premium:', updatedUser.isPremium || false);
+      }
+    } catch (err) {
+      console.error('Failed to refresh user data:', err);
+    }
+  };
+
   const value = {
     user,
+    userPlan,
     loading,
     error,
     logout,
+    refreshUser,
     isAuthenticated: !!user,
     accessToken,
     refreshToken,

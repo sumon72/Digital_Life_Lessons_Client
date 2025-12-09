@@ -4,6 +4,10 @@ import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Profile from '../pages/Profile'
+import LessonDetail from '../pages/LessonDetail'
+import Pricing from '../pages/Pricing'
+import PaymentSuccess from '../pages/PaymentSuccess'
+import PaymentCancel from '../pages/PaymentCancel'
 import ProtectedRoute from '../components/ProtectedRoute'
 import Dashboard from '../pages/admin/Dashboard'
 import ManageLessons from '../pages/admin/ManageLessons'
@@ -30,6 +34,22 @@ export const router = createBrowserRouter([
       {
         path: '/profile',
         element: <ProtectedRoute><Profile /></ProtectedRoute>,
+      },
+      {
+        path: '/lessons/:id',
+        element: <ProtectedRoute><LessonDetail /></ProtectedRoute>,
+      },
+      {
+        path: '/pricing',
+        element: <ProtectedRoute><Pricing /></ProtectedRoute>,
+      },
+      {
+        path: '/payment/success',
+        element: <ProtectedRoute><PaymentSuccess /></ProtectedRoute>,
+      },
+      {
+        path: '/payment/cancel',
+        element: <ProtectedRoute><PaymentCancel /></ProtectedRoute>,
       },
       {
         path: '/dashboard',

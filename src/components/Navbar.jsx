@@ -5,7 +5,7 @@ import { useUser } from '../context/UserContext'
 export default function Navbar() {
   const [theme, setTheme] = useState('light')
   const navigate = useNavigate()
-  const { user, logout, isAuthenticated, loading } = useUser()
+  const { user, logout, isAuthenticated, loading, userPlan } = useUser()
 
   useEffect(() => {
     const htmlElement = document.documentElement
@@ -61,6 +61,7 @@ export default function Navbar() {
       <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2">
         <li><Link to="/" className={`font-semibold ${textColor} ${linkHover}`}>Home</Link></li>
         <li><Link to="/public-lessons" className={`font-semibold ${textColor} ${linkHover}`}>Public Lessons</Link></li>
+        <li><Link to="/pricing" className={`font-semibold ${textColor} ${linkHover}`}>Pricing</Link></li>
         <li><Link to="/dashboard" className={`font-semibold ${textColor} ${linkHover}`}>Dashboard</Link></li>
       </ul>
 
@@ -89,6 +90,9 @@ export default function Navbar() {
                 <li className="menu-title">
                   <span className="font-bold text-base">{user?.displayName || user?.email}</span>
                 </li>
+                {userPlan?.isPremium ? (
+                  <li><span className="badge badge-secondary">Premium ⭐</span></li>
+                ) : ("")}
                 <li><Link to="/profile">Profile</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </ul>
