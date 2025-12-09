@@ -4,7 +4,7 @@ import api from '../../config/api'
 import toast, { Toaster } from 'react-hot-toast'
 import Swal from 'sweetalert2'
 
-export default function ManageLessons() {
+export default function AddLesson() {
   const [lessons, setLessons] = useState([])
   const [filter, setFilter] = useState('all')
   const [showModal, setShowModal] = useState(false)
@@ -96,7 +96,7 @@ export default function ManageLessons() {
       return
     }
 
-    const loadingToast = toast.loading(modalMode === 'create' ? 'Creating lesson...' : 'Updating lesson...')
+    const loadingToast = toast.loading(modalMode === 'create' ? 'Adding lesson...' : 'Updating lesson...')
 
     try {
       if (modalMode === 'create') {
@@ -110,7 +110,7 @@ export default function ManageLessons() {
         setLessons([response.data, ...lessons])
         setShowModal(false)
         setFormData({ title: '', content: '', author: '', status: 'draft' })
-        toast.success('Lesson created successfully', { id: loadingToast })
+        toast.success('Lesson added successfully', { id: loadingToast })
   
       } else if (modalMode === 'edit') {
         const response = await api.put(`/lessons/${selectedLesson._id}`, {
@@ -165,7 +165,7 @@ export default function ManageLessons() {
       />
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold">Manage Lessons</h2>
+        <h2 className="text-3xl font-bold">Add Lesson</h2>
         <button onClick={handleCreate} className="btn btn-primary">
           ➕ Add Lesson
         </button>

@@ -5,13 +5,14 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Profile from '../pages/Profile'
 import LessonDetail from '../pages/LessonDetail'
+import PublicLessons from '../pages/PublicLessons'
 import Pricing from '../pages/Pricing'
 import PaymentSuccess from '../pages/PaymentSuccess'
 import PaymentCancel from '../pages/PaymentCancel'
 import ProtectedRoute from '../components/ProtectedRoute'
 import AdminRoute from '../components/AdminRoute'
 import Dashboard from '../pages/admin/Dashboard'
-import ManageLessons from '../pages/admin/ManageLessons'
+import AddLesson from '../pages/admin/AddLesson'
 import ManageUsers from '../pages/admin/ManageUsers'
 import Analytics from '../pages/admin/Analytics'
 import Settings from '../pages/admin/Settings'
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: '/register',
         element: <Register />,
+      },
+      {
+        path: '/public-lessons',
+        element: <PublicLessons />,
       },
       {
         path: '/profile',
@@ -57,8 +62,8 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
       },
       {
-        path: '/managelessons',
-        element: <ProtectedRoute><ManageLessons /></ProtectedRoute>,
+        path: '/add-lesson',
+        element: <ProtectedRoute><AdminRoute><AddLesson /></AdminRoute></ProtectedRoute>,
       },
       {
         path: '/dashboard/users',
