@@ -149,6 +149,32 @@ export default function AddEditLesson() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="card bg-base-100 shadow-lg">
           <div className="card-body space-y-6">
+            {/* Owner Info (read-only) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold">Author</span>
+                </label>
+                <input
+                  type="text"
+                  value={user.displayName || 'Unnamed User'}
+                  disabled
+                  className="input input-bordered"
+                />
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold">Email</span>
+                </label>
+                <input
+                  type="text"
+                  value={user.email || 'Not provided'}
+                  disabled
+                  className="input input-bordered"
+                />
+              </div>
+            </div>
+
             {/* Title */}
             <div className="form-control">
               <label className="label">
@@ -245,6 +271,9 @@ export default function AddEditLesson() {
                 placeholder="https://example.com/image.jpg"
                 className="input input-bordered"
               />
+              <label className="label">
+                <span className="label-text-alt">Re-upload by pasting a new image URL (optional)</span>
+              </label>
               {formData.featuredImage && (
                 <div className="mt-2">
                   <img 
@@ -290,7 +319,6 @@ export default function AddEditLesson() {
                   value={formData.accessLevel}
                   onChange={handleChange}
                   className="select select-bordered"
-                  disabled={!userPlan?.isPremium && formData.accessLevel === 'free'}
                   required
                 >
                   <option value="free">🆓 Free</option>

@@ -54,7 +54,7 @@ export default function Navbar() {
     <nav className={`navbar ${navBg} shadow-lg sticky top-0 z-50 justify-between h-20`}>
       {/* Left: Logo */}
       <Link to="/" className={`btn btn-ghost normal-case text-2xl font-bold ${textColor} ${linkHover}`}>
-        📚 DLL
+        📚 Digital Life Lessons
       </Link>
 
       {/* Center: Menu */}

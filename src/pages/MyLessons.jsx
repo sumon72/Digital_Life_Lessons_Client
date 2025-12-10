@@ -74,7 +74,7 @@ export default function MyLessons() {
     try {
       const newLevel = currentLevel === 'free' ? 'premium' : 'free'
       await api.put(`/lessons/${lessonId}`, { accessLevel: newLevel })
-      setLessons(lessons.map(l => 
+      setLessons(prev => prev.map(l => 
         l._id === lessonId ? { ...l, accessLevel: newLevel } : l
       ))
       toast.success(`Lesson access level updated to ${newLevel}`)
@@ -203,7 +203,6 @@ export default function MyLessons() {
                       <button
                         onClick={() => handleToggleAccessLevel(lesson._id, lesson.accessLevel)}
                         className={`badge ${lesson.accessLevel === 'premium' ? 'badge-warning' : 'badge-info'} cursor-pointer`}
-                        disabled={!userPlan?.isPremium && lesson.accessLevel === 'free'}
                       >
                         {lesson.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}
                       </button>
