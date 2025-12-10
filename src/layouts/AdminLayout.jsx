@@ -31,11 +31,11 @@ export default function AdminLayout({ children }) {
   const isAdmin = user?.role === 'admin'
 
   const navItems = [
-    { icon: '📊', label: 'Dashboard', path: '/dashboard', adminOnly: false },
-    { icon: '📚', label: 'Add Lesson', path: '/add-lesson', adminOnly: false },
-    { icon: '👥', label: 'Manage Users', path: '/dashboard/users', adminOnly: true },
-    { icon: '📈', label: 'Analytics', path: '/dashboard/analytics', adminOnly: false },
-    { icon: '⚙️', label: 'Settings', path: '/dashboard/settings', adminOnly: true }
+    { icon: '🏠', label: 'Dashboard', path: '/dashboard/admin', adminOnly: true },
+    { icon: '👥', label: 'Manage Users', path: '/dashboard/admin/users', adminOnly: true },
+    { icon: '📚', label: 'Manage Lessons', path: '/dashboard/admin/lessons', adminOnly: true },
+    { icon: '🚩', label: 'Reported Lessons', path: '/dashboard/admin/reported', adminOnly: true },
+    { icon: '⚙️', label: 'Settings', path: '/dashboard/admin/settings', adminOnly: true }
   ]
 
   // Filter nav items based on user role

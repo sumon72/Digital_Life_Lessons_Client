@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import AdminLayout from '../../layouts/AdminLayout'
 import api from '../../config/api'
 import toast, { Toaster } from 'react-hot-toast'
 import Swal from 'sweetalert2'
@@ -10,11 +9,11 @@ export default function ManageUsers() {
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState('create') // create, edit, view
   const [selectedUser, setSelectedUser] = useState(null)
-  const [formData, setFormData] = useState({ 
-    displayName: '', 
-    email: '', 
+  const [formData, setFormData] = useState({
+    displayName: '',
+    email: '',
     photoURL: '',
-    role: 'user' 
+    role: 'user'
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -32,7 +31,7 @@ export default function ManageUsers() {
       setError(null)
       const response = await api.get('/users')
       setUsers(response.data || [])
-     
+
     } catch (err) {
       const errorMsg = 'Failed to fetch users: ' + (err.response?.data?.error || err.message)
       setError(errorMsg)
@@ -65,7 +64,7 @@ export default function ManageUsers() {
       toast.error('Cannot edit the main admin account')
       return
     }
-    
+
     setModalMode('edit')
     setSelectedUser(user)
     setFormData(user)
@@ -75,13 +74,13 @@ export default function ManageUsers() {
   // CRUD: DELETE
   const handleDelete = async (id) => {
     const user = users.find(u => u._id === id)
-    
+
     // Prevent deleting the main admin user
     if (user?.email === 'admin@gmail.com') {
       toast.error('Cannot delete the main admin account')
       return
     }
-    
+
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -109,13 +108,13 @@ export default function ManageUsers() {
   // Handle role change
   const handleRoleChange = async (userId, newRole) => {
     const user = users.find(u => u._id === userId)
-    
+
     // Prevent changing role of main admin user
     if (user?.email === 'admin@gmail.com') {
       toast.error('Cannot change the role of the main admin account')
       return
     }
-    
+
     const loadingToast = toast.loading('Updating role...')
     try {
       const response = await api.put(`/users/${userId}`, {
@@ -123,7 +122,7 @@ export default function ManageUsers() {
         photoURL: user.photoURL,
         role: newRole
       })
-      
+
       setUsers(users.map(u => u._id === userId ? response.data : u))
       toast.success('Role updated successfully', { id: loadingToast })
     } catch (err) {
@@ -135,7 +134,7 @@ export default function ManageUsers() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!formData.displayName || !formData.email) {
       toast.error('Please fill in all required fields')
       return
@@ -151,7 +150,7 @@ export default function ManageUsers() {
           photoURL: formData.photoURL,
           role: formData.role
         })
-        
+
         setUsers([response.data, ...users])
         setShowModal(false)
         setFormData({ displayName: '', email: '', photoURL: '', role: 'user' })
@@ -163,7 +162,7 @@ export default function ManageUsers() {
           photoURL: formData.photoURL,
           role: formData.role
         })
-        
+
         setUsers(users.map(u => u._id === selectedUser._id ? response.data : u))
         setShowModal(false)
         setFormData({ displayName: '', email: '', photoURL: '', role: 'user' })
@@ -185,8 +184,6 @@ export default function ManageUsers() {
     switch (role?.toLowerCase()) {
       case 'admin':
         return 'bg-purple-100 text-purple-700'
-      case 'moderator':
-        return 'bg-blue-100 text-blue-700'
       case 'user':
       default:
         return 'bg-gray-100 text-gray-700'
@@ -194,8 +191,8 @@ export default function ManageUsers() {
   }
 
   return (
-    <AdminLayout>
-      <Toaster 
+    <>
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 3000,
@@ -248,41 +245,28 @@ export default function ManageUsers() {
           <div className="mb-6 flex gap-3 flex-wrap">
             <button
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'all'
+              className={`px-4 py-2 rounded-lg font-medium transition ${filter === 'all'
                   ? 'bg-primary text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               All ({users.length})
             </button>
             <button
               onClick={() => setFilter('admin')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'admin'
+              className={`px-4 py-2 rounded-lg font-medium transition ${filter === 'admin'
                   ? 'bg-primary text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Admin ({users.filter(u => u.role === 'admin').length})
             </button>
             <button
-              onClick={() => setFilter('moderator')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'moderator'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Moderator ({users.filter(u => u.role === 'moderator').length})
-            </button>
-            <button
               onClick={() => setFilter('user')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'user'
+              className={`px-4 py-2 rounded-lg font-medium transition ${filter === 'user'
                   ? 'bg-primary text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               User ({users.filter(u => u.role === 'user').length})
             </button>
@@ -330,7 +314,6 @@ export default function ManageUsers() {
                               className="text-xs px-2 py-1 border rounded cursor-pointer"
                             >
                               <option value="user">User</option>
-                              <option value="moderator">Moderator</option>
                               <option value="admin">Admin</option>
                             </select>
                           )}
@@ -347,11 +330,10 @@ export default function ManageUsers() {
                         </button>
                         <button
                           onClick={() => handleEdit(user)}
-                          className={`btn btn-sm btn-outline ${
-                            user.email === 'admin@gmail.com' 
-                              ? 'btn-disabled opacity-50 cursor-not-allowed' 
+                          className={`btn btn-sm btn-outline ${user.email === 'admin@gmail.com'
+                              ? 'btn-disabled opacity-50 cursor-not-allowed'
                               : 'btn-primary'
-                          }`}
+                            }`}
                           disabled={user.email === 'admin@gmail.com'}
                           title={user.email === 'admin@gmail.com' ? 'Protected account' : 'Edit'}
                         >
@@ -359,11 +341,10 @@ export default function ManageUsers() {
                         </button>
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className={`btn btn-sm btn-outline ${
-                            user.email === 'admin@gmail.com'
+                          className={`btn btn-sm btn-outline ${user.email === 'admin@gmail.com'
                               ? 'btn-disabled opacity-50 cursor-not-allowed'
                               : 'text-red-600 hover:bg-red-50'
-                          }`}
+                            }`}
                           disabled={user.email === 'admin@gmail.com'}
                           title={user.email === 'admin@gmail.com' ? 'Protected account' : 'Delete'}
                         >
@@ -480,7 +461,6 @@ export default function ManageUsers() {
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="user">User</option>
-                      <option value="moderator">Moderator</option>
                       <option value="admin">Admin</option>
                     </select>
                   </div>
@@ -503,6 +483,6 @@ export default function ManageUsers() {
           </div>
         </div>
       )}
-    </AdminLayout>
+    </>
   )
 }

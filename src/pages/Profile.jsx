@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { updateProfile } from 'firebase/auth'
 import { auth } from '../config/firebase'
+import api from '../config/api'
+import toast from 'react-hot-toast'
 
 export default function Profile() {
-  const { user } = useUser()
+  const { user, userPlan } = useUser()
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [photoURL, setPhotoURL] = useState('')
@@ -12,6 +16,13 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [stats, setStats] = useState({
+    totalLessons: 0,
+    totalSaved: 0,
+    totalLikes: 0
+  })
+  const [publicLessons, setPublicLessons] = useState([])
+  const [loadingStats, setLoadingStats] = useState(true)
 
   useEffect(() => {
     if (user) {
@@ -19,8 +30,34 @@ export default function Profile() {
       setEmail(user.email || '')
       setPhotoURL(user.photoURL || '')
       setPhotoURLInput(user.photoURL || '')
+      fetchUserStats()
+      fetchPublicLessons()
     }
   }, [user])
+
+  const fetchUserStats = async () => {
+    try {
+      const response = await api.get('/dashboard/user/stats')
+      setStats({
+        totalLessons: response.data.totalLessons || 0,
+        totalSaved: response.data.totalSaved || 0,
+        totalLikes: response.data.totalLikes || 0
+      })
+    } catch (err) {
+      console.error('Error fetching user stats:', err)
+    } finally {
+      setLoadingStats(false)
+    }
+  }
+
+  const fetchPublicLessons = async () => {
+    try {
+      const response = await api.get('/dashboard/user/public-lessons')
+      setPublicLessons(response.data)
+    } catch (err) {
+      console.error('Error fetching public lessons:', err)
+    }
+  }
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
@@ -55,6 +92,7 @@ export default function Profile() {
       }
 
       setSuccess('Profile updated successfully!')
+      toast.success('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
       console.error('Error updating profile:', err)
@@ -138,6 +176,43 @@ export default function Profile() {
               </div>
               <h1 className="text-3xl font-bold text-base-content">{name || 'User Profile'}</h1>
               <p className="text-base-content/60 mt-1">{email}</p>
+              {userPlan?.isPremium && (
+                <div className="badge badge-warning badge-lg gap-2 mt-3 shadow-lg">
+                  <span>⭐</span>
+                  <span className="font-semibold">Premium Member</span>
+                </div>
+              )}
+            </div>
+
+            {/* Stats Section */}
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              <div className="card bg-gradient-to-br from-blue-50 to-blue-100 shadow-md">
+                <div className="card-body p-4 text-center">
+                  <div className="text-3xl mb-1">📚</div>
+                  <div className="text-2xl font-bold text-blue-700">
+                    {loadingStats ? '...' : stats.totalLessons}
+                  </div>
+                  <div className="text-xs text-blue-600 font-semibold">Lessons Created</div>
+                </div>
+              </div>
+              <div className="card bg-gradient-to-br from-red-50 to-red-100 shadow-md">
+                <div className="card-body p-4 text-center">
+                  <div className="text-3xl mb-1">❤️</div>
+                  <div className="text-2xl font-bold text-red-700">
+                    {loadingStats ? '...' : stats.totalLikes}
+                  </div>
+                  <div className="text-xs text-red-600 font-semibold">Total Likes</div>
+                </div>
+              </div>
+              <div className="card bg-gradient-to-br from-purple-50 to-purple-100 shadow-md">
+                <div className="card-body p-4 text-center">
+                  <div className="text-3xl mb-1">🔖</div>
+                  <div className="text-2xl font-bold text-purple-700">
+                    {loadingStats ? '...' : stats.totalSaved}
+                  </div>
+                  <div className="text-xs text-purple-600 font-semibold">Lessons Saved</div>
+                </div>
+              </div>
             </div>
 
             {/* Profile Form */}
@@ -230,6 +305,69 @@ export default function Profile() {
                   }) : 'N/A'}
                 </p>
               </div>
+            </div>
+
+            {/* Public Lessons Section */}
+            <div className="divider my-8"></div>
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">My Public Lessons</h2>
+                <button
+                  onClick={() => navigate('/dashboard/my-lessons')}
+                  className="btn btn-sm btn-ghost"
+                >
+                  View All →
+                </button>
+              </div>
+
+              {publicLessons.length === 0 ? (
+                <div className="text-center py-12 bg-base-200/50 rounded-lg">
+                  <div className="text-5xl mb-4">📝</div>
+                  <p className="text-base-content/60">No public lessons yet</p>
+                  <button
+                    onClick={() => navigate('/dashboard/add-lesson')}
+                    className="btn btn-primary btn-sm mt-4"
+                  >
+                    Create Your First Lesson
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {publicLessons.slice(0, 4).map((lesson) => (
+                    <div
+                      key={lesson._id}
+                      onClick={() => navigate(`/lesson/${lesson._id}`)}
+                      className="card bg-base-200 hover:bg-base-300 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                    >
+                      <div className="card-body p-4">
+                        <h3 className="card-title text-base">{lesson.title}</h3>
+                        <div className="flex gap-2 flex-wrap mb-2">
+                          <span className="badge badge-sm badge-outline">{lesson.category}</span>
+                          {lesson.accessLevel === 'premium' && (
+                            <span className="badge badge-sm badge-warning">⭐ Premium</span>
+                          )}
+                        </div>
+                        <div className="flex gap-3 text-xs text-base-content/60">
+                          <span>❤️ {lesson.likesCount || 0}</span>
+                          <span>🔖 {lesson.savedCount || 0}</span>
+                          <span>👁️ {lesson.viewsCount || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {publicLessons.length > 4 && (
+                <div className="text-center mt-6">
+                  <button
+                    onClick={() => navigate('/dashboard/my-lessons')}
+                    className="btn btn-outline"
+                  >
+                    View All {publicLessons.length} Public Lessons
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

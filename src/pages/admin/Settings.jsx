@@ -1,8 +1,7 @@
-import AdminLayout from '../../layouts/AdminLayout'
 
 export default function Settings() {
   return (
-    <AdminLayout>
+    <>
       <h2 className="text-3xl font-bold mb-6">Settings</h2>
 
       <div className="space-y-6 max-w-2xl">
@@ -74,6 +73,6 @@ export default function Settings() {
           <button className="btn btn-outline">Reset</button>
         </div>
       </div>
-    </AdminLayout>
+    </>
   )
 }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import AdminLayout from '../../layouts/AdminLayout'
 import api from '../../config/api'
 import toast, { Toaster } from 'react-hot-toast'
 import Swal from 'sweetalert2'
@@ -138,7 +137,7 @@ export default function ManageLessons() {
   }
 
   return (
-    <AdminLayout>
+<>
       <Toaster 
         position="top-right"
         toastOptions={{
@@ -400,6 +399,6 @@ export default function ManageLessons() {
           </div>
         </div>
       )}
-    </AdminLayout>
+    </>
   )
 }
