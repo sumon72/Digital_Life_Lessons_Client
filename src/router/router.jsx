@@ -19,10 +19,8 @@ import AuthorLessons from '../pages/AuthorLessons'
 
 // Dashboard Components
 import DashboardHome from '../pages/DashboardHome'
-import UserDashboardHome from '../pages/UserDashboardHome'
 import MyLessons from '../pages/MyLessons'
 import MyFavorites from '../pages/MyFavorites'
-import AddEditLesson from '../pages/AddEditLesson'
 
 // Admin Components
 import AdminDashboardHome from '../pages/admin/AdminDashboardHome'
@@ -106,26 +104,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      {
-        path: '/dashboard/add-lesson',
-        element: (
-          <ProtectedRoute>
-            <UserLayout>
-              <AddEditLesson />
-            </UserLayout>
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: '/dashboard/edit-lesson/:id',
-        element: (
-          <ProtectedRoute>
-            <UserLayout>
-              <AddEditLesson />
-            </UserLayout>
-          </ProtectedRoute>
-        ),
-      },
+      
       // Admin Routes
       {
         path: '/dashboard/admin',

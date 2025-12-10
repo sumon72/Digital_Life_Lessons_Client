@@ -317,7 +317,6 @@ export default function PublicLessons() {
                       {lesson.authorPhotoURL ? (
                         <img
                           src={lesson.authorPhotoURL}
-                          alt={lesson.authorName}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (

@@ -83,30 +83,7 @@ export default function UserDashboardHome() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="card bg-base-100 shadow-lg mb-8">
-          <div className="card-body">
-            <h2 className="card-title mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Link to="/dashboard/add-lesson" className="btn btn-primary gap-2">
-                <span>➕</span>
-                <span>Add New Lesson</span>
-              </Link>
-              <Link to="/dashboard/my-lessons" className="btn btn-outline gap-2">
-                <span>📝</span>
-                <span>My Lessons</span>
-              </Link>
-              <Link to="/dashboard/my-favorites" className="btn btn-outline gap-2">
-                <span>🔖</span>
-                <span>My Favorites</span>
-              </Link>
-              <Link to="/public-lessons" className="btn btn-outline gap-2">
-                <span>🌍</span>
-                <span>Browse Lessons</span>
-              </Link>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Recent Lessons */}
         <div className="card bg-base-100 shadow-lg">
