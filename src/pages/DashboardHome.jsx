@@ -1,7 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import UserDashboardHome from './UserDashboardHome'
-import AdminLayout from '../layouts/AdminLayout'
 
 export default function DashboardHome() {
   const { user, loading } = useUser()
@@ -20,7 +19,7 @@ export default function DashboardHome() {
 
   // Route based on user role
   if (user.role === 'admin') {
-    return <AdminLayout />
+    return <Navigate to="/dashboard/admin" replace />
   }
 
   return <UserDashboardHome />
