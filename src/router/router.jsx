@@ -16,6 +16,9 @@ import AddLesson from '../pages/admin/AddLesson'
 import ManageUsers from '../pages/admin/ManageUsers'
 import Analytics from '../pages/admin/Analytics'
 import Settings from '../pages/admin/Settings'
+import NotFound from '../pages/NotFound'
+import Unauthorized from '../pages/Unauthorized'
+import AuthorLessons from '../pages/AuthorLessons'
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: '/public-lessons',
         element: <PublicLessons />,
+      },
+      {
+        path: '/author/:authorName',
+        element: <AuthorLessons />,
       },
       {
         path: '/profile',
@@ -76,6 +83,14 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/settings',
         element: <ProtectedRoute><AdminRoute><Settings /></AdminRoute></ProtectedRoute>,
+      },
+      {
+        path: '/unauthorized',
+        element: <Unauthorized />,
+      },
+      {
+        path: '*',
+        element: <NotFound />,
       },
     ],
   },
