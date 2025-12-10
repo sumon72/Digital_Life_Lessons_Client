@@ -168,6 +168,48 @@ export default function LessonDetail() {
     return readTime < 1 ? 1 : readTime
   }
 
+  const getToneBadgeColor = (tone) => {
+    switch (tone?.toLowerCase()) {
+      case 'happy':
+        return 'bg-yellow-100 text-yellow-700'
+      case 'sad':
+        return 'bg-blue-100 text-blue-700'
+      case 'motivated':
+        return 'bg-green-100 text-green-700'
+      case 'reflective':
+        return 'bg-purple-100 text-purple-700'
+      case 'hopeful':
+        return 'bg-cyan-100 text-cyan-700'
+      case 'angry':
+        return 'bg-red-100 text-red-700'
+      case 'grateful':
+        return 'bg-pink-100 text-pink-700'
+      default:
+        return 'bg-gray-100 text-gray-700'
+    }
+  }
+
+  const getCategoryBadgeColor = (category) => {
+    switch (category?.toLowerCase()) {
+      case 'work':
+        return 'bg-blue-100 text-blue-700'
+      case 'personal':
+        return 'bg-purple-100 text-purple-700'
+      case 'relationships':
+        return 'bg-pink-100 text-pink-700'
+      case 'health':
+        return 'bg-green-100 text-green-700'
+      case 'finance':
+        return 'bg-emerald-100 text-emerald-700'
+      case 'education':
+        return 'bg-indigo-100 text-indigo-700'
+      case 'spirituality':
+        return 'bg-violet-100 text-violet-700'
+      default:
+        return 'bg-gray-100 text-gray-700'
+    }
+  }
+
   const isPremiumLocked = lesson?.accessLevel === 'premium' && !userPlan?.isPremium
 
   if (loading) {
@@ -261,10 +303,10 @@ export default function LessonDetail() {
 
                     {/* Category & Tone Badges */}
                     <div className="flex flex-wrap gap-2 mb-6">
-                      <span className="badge badge-lg badge-primary">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryBadgeColor(lesson.category)}`}>
                         {lesson.category || 'Uncategorized'}
                       </span>
-                      <span className="badge badge-lg badge-secondary">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getToneBadgeColor(lesson.emotionalTone)}`}>
                         {lesson.emotionalTone || 'Neutral'}
                       </span>
                     </div>
@@ -273,10 +315,10 @@ export default function LessonDetail() {
                   {/* Access Level Badge */}
                   <div className="flex flex-col gap-2">
                     <span
-                      className={`badge badge-lg ${
+                      className={`px-4 py-2 rounded-full text-sm font-medium ${
                         lesson.accessLevel === 'premium'
-                          ? 'badge-warning'
-                          : 'badge-success'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-green-100 text-green-700'
                       }`}
                     >
                       {lesson.accessLevel === 'premium' ? '⭐ Premium' : '🌍 Free'}
@@ -422,24 +464,26 @@ export default function LessonDetail() {
                         className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
                         onClick={() => navigate(`/lessons/${similarLesson._id}`)}
                       >
-                        <div className="card-body">
+                        <div className="card-body flex flex-col">
                           <h3 className="card-title text-base line-clamp-2">{similarLesson.title}</h3>
                           <p className="text-sm text-base-content/70 line-clamp-2">
                             {similarLesson.description}
                           </p>
                           <div className="flex flex-wrap gap-2 my-3">
-                            <span className="badge badge-sm">{similarLesson.category}</span>
-                            <span className="badge badge-sm badge-outline">
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryBadgeColor(similarLesson.category)}`}>
+                              {similarLesson.category}
+                            </span>
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getToneBadgeColor(similarLesson.emotionalTone)}`}>
                               {similarLesson.emotionalTone}
                             </span>
                           </div>
-                          <div className="card-actions justify-between">
-                            <span className="text-xs text-base-content/50">
-                              {formatDate(similarLesson.createdAt)}
-                            </span>
-                            <button className="btn btn-sm btn-primary gap-1">
-                              <span>👁️</span>
-                              <span>View</span>
+                          <div className="text-xs text-base-content/50 mb-4">
+                            {formatDate(similarLesson.createdAt)}
+                          </div>
+                          <div className="card-actions mt-auto">
+                            <button className="btn btn-sm btn-primary w-full gap-2">
+                              <span>📖</span>
+                              <span>View Lesson</span>
                             </button>
                           </div>
                         </div>

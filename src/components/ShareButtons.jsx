@@ -1,42 +1,27 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import {
+  TwitterShareButton,
+  FacebookShareButton,
+  LinkedinShareButton,
+  WhatsappShareButton,
+  EmailShareButton,
+  TelegramShareButton,
+  RedditShareButton,
+  PinterestShareButton
+} from 'react-share'
 
 export const ShareButtons = ({ lesson }) => {
   const [showDropdown, setShowDropdown] = useState(false)
 
   const shareUrl = `${window.location.origin}/lessons/${lesson._id}`
   const shareTitle = lesson.title
-  const shareText = `${lesson.title} - ${lesson.description}`
+  const shareDescription = lesson.description || `Check out this amazing lesson: ${lesson.title}`
 
-  const handleShare = (platform) => {
-    let url = ''
-    
-    switch (platform) {
-      case 'twitter':
-        url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`
-        break
-      case 'facebook':
-        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
-        break
-      case 'linkedin':
-        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`
-        break
-      case 'whatsapp':
-        url = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`
-        break
-      case 'copy':
-        navigator.clipboard.writeText(shareUrl)
-        toast.success('Link copied to clipboard!')
-        setShowDropdown(false)
-        return
-      default:
-        return
-    }
-
-    if (url) {
-      window.open(url, '_blank', 'width=600,height=400')
-      setShowDropdown(false)
-    }
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareUrl)
+    toast.success('📋 Link copied to clipboard!')
+    setShowDropdown(false)
   }
 
   return (
@@ -49,13 +34,80 @@ export const ShareButtons = ({ lesson }) => {
         <span>Share</span>
       </button>
       {showDropdown && (
-        <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-          <li><a onClick={() => handleShare('twitter')}>🐦 Twitter</a></li>
-          <li><a onClick={() => handleShare('facebook')}>👍 Facebook</a></li>
-          <li><a onClick={() => handleShare('linkedin')}>💼 LinkedIn</a></li>
-          <li><a onClick={() => handleShare('whatsapp')}>💬 WhatsApp</a></li>
-          <li><a onClick={() => handleShare('copy')}>📋 Copy Link</a></li>
-        </ul>
+        <div className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64">
+          <div className="p-2 space-y-2">
+            {/* Share Buttons Grid */}
+            <div className="grid grid-cols-4 gap-2 mb-3">
+              {/* Twitter */}
+              <TwitterShareButton url={shareUrl} title={shareTitle} hashtags={['lifelessons', 'wisdom']}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-xl" title="Twitter">
+                  𝕏
+                </div>
+              </TwitterShareButton>
+
+              {/* Facebook */}
+              <FacebookShareButton url={shareUrl} quote={shareTitle}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-lg" title="Facebook">
+                  f
+                </div>
+              </FacebookShareButton>
+
+              {/* LinkedIn */}
+              <LinkedinShareButton url={shareUrl} title={shareTitle} summary={shareDescription}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-lg" title="LinkedIn">
+                  in
+                </div>
+              </LinkedinShareButton>
+
+              {/* WhatsApp */}
+              <WhatsappShareButton url={shareUrl} title={shareTitle}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-xl">
+                  💬
+                </div>
+              </WhatsappShareButton>
+
+              {/* Email */}
+              <EmailShareButton url={shareUrl} subject={shareTitle} body={shareDescription}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-xl">
+                  ✉️
+                </div>
+              </EmailShareButton>
+
+              {/* Telegram */}
+              <TelegramShareButton url={shareUrl} title={shareTitle}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-xl">
+                  ✈️
+                </div>
+              </TelegramShareButton>
+
+              {/* Reddit */}
+              <RedditShareButton url={shareUrl} title={shareTitle}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-xl" title="Reddit">
+                  🔗
+                </div>
+              </RedditShareButton>
+
+              {/* Pinterest */}
+              <PinterestShareButton url={shareUrl} media={lesson.featuredImage} description={shareTitle}>
+                <div className="btn btn-sm btn-ghost w-full h-12 flex items-center justify-center text-xl">
+                  📌
+                </div>
+              </PinterestShareButton>
+            </div>
+
+            {/* Divider */}
+            <div className="divider my-1"></div>
+
+            {/* Copy Link Button */}
+            <button
+              onClick={handleCopyLink}
+              className="btn btn-sm btn-outline w-full gap-2"
+            >
+              <span>📋</span>
+              <span>Copy Link</span>
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

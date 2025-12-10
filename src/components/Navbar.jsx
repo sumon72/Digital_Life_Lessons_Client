@@ -91,7 +91,7 @@ export default function Navbar() {
                   <span className="font-bold text-base">{user?.displayName || user?.email}</span>
                 </li>
                 {userPlan?.isPremium ? (
-                  <li><span className="badge badge-secondary">Premium ⭐</span></li>
+                  <li><span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700 inline-block">Premium ⭐</span></li>
                 ) : ("")}
                 <li><Link to="/profile">Profile</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
