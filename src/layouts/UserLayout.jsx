@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 
-export default function AdminLayout({ children }) {
+export default function UserLayout({ children }) {
   const [theme, setTheme] = useState('light')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const location = useLocation()
@@ -17,6 +17,7 @@ export default function AdminLayout({ children }) {
     const handleThemeChange = (e) => {
       setTheme(e.detail || localStorage.getItem('theme') || 'light')
     }
+
     window.addEventListener('app-theme-changed', handleThemeChange)
     return () => window.removeEventListener('app-theme-changed', handleThemeChange)
   }, [])
@@ -28,18 +29,14 @@ export default function AdminLayout({ children }) {
   const activeBg = isDark ? 'bg-slate-800 text-primary' : 'bg-gray-100 text-primary'
   const inactiveBg = isDark ? 'hover:bg-slate-800' : 'hover:bg-gray-50'
 
-  const isAdmin = user?.role === 'admin'
-
   const navItems = [
-    { icon: '🏠', label: 'Dashboard', path: '/dashboard/admin', adminOnly: true },
-    { icon: '👥', label: 'Manage Users', path: '/dashboard/admin/users', adminOnly: true },
-    { icon: '📚', label: 'Manage Lessons', path: '/dashboard/admin/lessons', adminOnly: true },
-    { icon: '🚩', label: 'Reported Lessons', path: '/dashboard/admin/reported', adminOnly: true },
-    { icon: '⚙️', label: 'Settings', path: '/dashboard/admin/settings', adminOnly: true }
+    { icon: '🏠', label: 'Dashboard', path: '/dashboard' },
+    { icon: '📚', label: 'My Lessons', path: '/dashboard/my-lessons' },
+    { icon: '📝', label: 'Add Lesson', path: '/dashboard/add-lesson' },
+    { icon: '🔖', label: 'Favorites', path: '/dashboard/my-favorites' },
+    { icon: '🌍', label: 'Browse Lessons', path: '/public-lessons' },
+    { icon: '👤', label: 'Profile', path: '/profile' }
   ]
-
-  // Filter nav items based on user role
-  const visibleNavItems = navItems.filter(item => !item.adminOnly || isAdmin)
 
   const isActive = (path) => {
     if (path === '/dashboard') return location.pathname === '/dashboard'
@@ -51,8 +48,8 @@ export default function AdminLayout({ children }) {
       {/* Sidebar */}
       <aside className={`${sidebarBg} ${sidebarBorder} border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} shadow-md`}>
         <div className={`flex items-center justify-between h-16 px-4 ${isDark ? 'border-slate-700' : 'border-gray-200'} border-b`}>
-          <Link to="#" className={`font-semibold ${sidebarText}`}>
-            {sidebarOpen ? '📚 Admin Dashboard' : '📚'}
+          <Link to="/" className={`font-semibold ${sidebarText}`}>
+            {sidebarOpen ? '📚 User Dashboard' : '📚'}
           </Link>
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
@@ -63,16 +60,16 @@ export default function AdminLayout({ children }) {
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="mt-6 space-y-2 px-3">
-          {visibleNavItems.map((item) => (
+        <nav className="mt-4 space-y-2 px-3">
+          {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition ${isActive(item.path)
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition ${
+                isActive(item.path)
                   ? activeBg
                   : `${sidebarText} ${inactiveBg}`
-                }`}
+              }`}
               title={!sidebarOpen ? item.label : ''}
             >
               <span className="text-xl">{item.icon}</span>
@@ -84,11 +81,8 @@ export default function AdminLayout({ children }) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto p-8">
-          <div className={`${isDark ? 'bg-slate-900' : 'bg-white'} rounded-xl shadow-md p-6`}>
-            {children}
-          </div>
+        <main className={`flex-1 overflow-auto p-6 ${isDark ? 'bg-slate-900' : 'bg-gray-100'}`}>
+          {children}
         </main>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from '../components/Layout'
 import AdminLayout from '../layouts/AdminLayout'
+import UserLayout from '../layouts/UserLayout'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
@@ -77,23 +78,53 @@ export const router = createBrowserRouter([
       // Dashboard Routes
       {
         path: '/dashboard',
-        element: <ProtectedRoute><DashboardHome /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <UserLayout>
+              <DashboardHome />
+            </UserLayout>
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/dashboard/my-lessons',
-        element: <ProtectedRoute><MyLessons /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <UserLayout>
+              <MyLessons />
+            </UserLayout>
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/dashboard/my-favorites',
-        element: <ProtectedRoute><MyFavorites /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <UserLayout>
+              <MyFavorites />
+            </UserLayout>
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/dashboard/add-lesson',
-        element: <ProtectedRoute><AddEditLesson /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <UserLayout>
+              <AddEditLesson />
+            </UserLayout>
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/dashboard/edit-lesson/:id',
-        element: <ProtectedRoute><AddEditLesson /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <UserLayout>
+              <AddEditLesson />
+            </UserLayout>
+          </ProtectedRoute>
+        ),
       },
       // Admin Routes
       {
