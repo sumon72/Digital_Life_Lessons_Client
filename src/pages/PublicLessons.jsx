@@ -88,7 +88,7 @@ export default function PublicLessons() {
       return
     }
 
-    navigate(`/lessons/${lessonId}`)
+    navigate(`/lesson/${lessonId}`)
   }
 
   const formatDate = (dateString) => {

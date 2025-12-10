@@ -130,7 +130,7 @@ export default function UserDashboardHome() {
                   <div 
                     key={lesson._id} 
                     className="card bg-base-200 hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => navigate(`/lessons/${lesson._id}`)}
+                    onClick={() => navigate(`/lesson/${lesson._id}`)}
                   >
                     <div className="card-body p-4">
                       <h3 className="font-semibold line-clamp-2">{lesson.title}</h3>

@@ -462,7 +462,7 @@ export default function LessonDetail() {
                       <div
                         key={similarLesson._id}
                         className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
-                        onClick={() => navigate(`/lessons/${similarLesson._id}`)}
+                        onClick={() => navigate(`/lesson/${similarLesson._id}`)}
                       >
                         <div className="card-body flex flex-col">
                           <h3 className="card-title text-base line-clamp-2">{similarLesson.title}</h3>

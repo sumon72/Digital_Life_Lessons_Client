@@ -189,7 +189,7 @@ export default function MyFavorites() {
                     <td>
                       <div className="flex gap-2">
                         <button
-                          onClick={() => navigate(`/lessons/${lesson._id}`)}
+                          onClick={() => navigate(`/lesson/${lesson._id}`)}
                           className="btn btn-xs btn-primary"
                           title="View Details"
                         >

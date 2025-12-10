@@ -163,7 +163,7 @@ export default function AuthorLessons() {
               <div
                 key={lesson._id}
                 className="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                onClick={() => navigate(`/lessons/${lesson._id}`)}
+                onClick={() => navigate(`/lesson/${lesson._id}`)}
               >
                 {/* Featured Image or Gradient */}
                 {lesson.featuredImage ? (

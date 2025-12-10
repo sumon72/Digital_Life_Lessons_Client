@@ -218,7 +218,7 @@ export default function MyLessons() {
                     <td>
                       <div className="flex gap-2">
                         <button
-                          onClick={() => navigate(`/lessons/${lesson._id}`)}
+                          onClick={() => navigate(`/lesson/${lesson._id}`)}
                           className="btn btn-xs btn-info"
                           title="View Details"
                         >
