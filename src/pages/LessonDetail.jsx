@@ -794,54 +794,70 @@ export default function LessonDetail() {
               </div>
             </section>
 
-            {/* Similar & Recommended Lessons */}
-            {similarLessons.length > 0 && (
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold mb-6">Similar Lessons You'll Love</h2>
-                {loadingSimilar ? (
-                  <div className="flex justify-center py-12">
-                    <div className="loading loading-spinner loading-lg"></div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {similarLessons.map((similarLesson) => (
-                      <div
-                        key={similarLesson._id}
-                        className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
-                        onClick={() => navigate(`/lesson/${similarLesson._id}`)}
-                      >
-                        <div className="card-body flex flex-col">
-                          <h3 className="card-title text-base line-clamp-2">{similarLesson.title}</h3>
-                          <p className="text-sm text-base-content/70 line-clamp-2">
-                            {similarLesson.description}
-                          </p>
-                          <div className="flex flex-wrap gap-2 my-3">
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryBadgeColor(similarLesson.category)}`}>
-                              {similarLesson.category}
-                            </span>
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getToneBadgeColor(similarLesson.emotionalTone)}`}>
-                              {similarLesson.emotionalTone}
-                            </span>
-                          </div>
-                          <div className="text-xs text-base-content/50 mb-4">
-                            {formatDate(similarLesson.createdAt)}
-                          </div>
-                          <div className="card-actions mt-auto">
-                            <button className="btn btn-sm btn-primary w-full gap-2">
-                              <span>📖</span>
-                              <span>View Lesson</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
           </>
         )}
       </div>
+      {/* Similar & Recommended Lessons (always visible, even if premium locked) */}
+      <section className="max-w-4xl mx-auto mb-12 px-4 md:px-8 lg:px-16">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-2xl font-bold">Similar Lessons You'll Love</h2>
+          <p className="text-sm text-base-content/60">
+            Based on category ({lesson?.category || 'N/A'}) or tone ({lesson?.emotionalTone || 'N/A'})
+          </p>
+        </div>
+        {loadingSimilar ? (
+          <div className="flex justify-center py-12">
+            <div className="loading loading-spinner loading-lg"></div>
+          </div>
+        ) : similarLessons.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {similarLessons.slice(0, 6).map((similarLesson) => (
+              <div
+                key={similarLesson._id}
+                className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+                onClick={() => navigate(`/lesson/${similarLesson._id}`)}
+              >
+                <div className="card-body flex flex-col">
+                  <h3 className="card-title text-base line-clamp-2">{similarLesson.title}</h3>
+                  <p className="text-sm text-base-content/70 line-clamp-2">
+                    {similarLesson.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 my-3">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryBadgeColor(similarLesson.category)}`}>
+                      {similarLesson.category}
+                    </span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getToneBadgeColor(similarLesson.emotionalTone)}`}>
+                      {similarLesson.emotionalTone}
+                    </span>
+                  </div>
+                  <div className="text-xs text-base-content/50 mb-4">
+                    {formatDate(similarLesson.createdAt)}
+                  </div>
+                  <div className="card-actions mt-auto">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/lesson/${similarLesson._id}`);
+                      }}
+                      className="btn btn-sm btn-primary w-full gap-2"
+                    >
+                      <span>📖</span>
+                      <span>View Lesson</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 bg-base-100 rounded-lg border border-base-200">
+            <div className="text-5xl mb-3">🧭</div>
+            <p className="text-lg font-semibold">No similar lessons found yet</p>
+            <p className="text-base-content/60">Check back later for more in this category or tone.</p>
+          </div>
+        )}
+      </section>
     </main>
   )
 }
