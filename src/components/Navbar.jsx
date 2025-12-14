@@ -47,8 +47,8 @@ export default function Navbar() {
     ? 'btn btn-sm h-10 font-semibold bg-primary text-white hover:bg-primary-focus'
     : 'btn btn-sm h-10 font-semibold bg-primary/90 text-white hover:bg-primary-focus'
   const themeBtnClass = theme === 'light'
-    ? `btn btn-ghost btn-circle w-12 h-12 border border-gray-200 ${textColor} hover:bg-neutral-100 transition transform duration-200`
-    : `btn btn-ghost btn-circle w-12 h-12 border border-slate-700 ${textColor} hover:bg-slate-800 transition transform duration-200`
+    ? 'relative inline-flex items-center justify-between w-24 px-3 py-2 rounded-full border border-gray-200 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'
+    : 'relative inline-flex items-center justify-between w-24 px-3 py-2 rounded-full border border-slate-700 bg-slate-900/80 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'
 
   return (
     <nav className={`navbar ${navBg} shadow-lg sticky top-0 z-50 justify-between h-20`}>
@@ -112,15 +112,16 @@ export default function Navbar() {
           title={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
           aria-pressed={theme === 'dark'}
         >
-          {theme === 'light' ? (
-            <svg className={`w-6 h-6 ${theme === 'light' ? 'rotate-0' : 'rotate-45'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 118.646 3.646 9 9 0 0120.354 15.354z" />
-            </svg>
-          ) : (
-            <svg className={`w-6 h-6 ${theme === 'dark' ? 'rotate-0' : 'rotate-45'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          )}
+          <span className={`flex items-center gap-1 text-xs font-semibold ${theme === 'light' ? 'text-amber-600' : 'text-slate-200'}`}>
+            <span className="text-lg">☀️</span>
+          </span>
+          <span className={`flex items-center gap-1 text-xs font-semibold ${theme === 'dark' ? 'text-amber-200' : 'text-slate-500'}`}>
+            <span className="text-lg">🌙</span> 
+          </span>
+          <span
+            className={`absolute inset-y-1 w-11 rounded-full shadow-sm transition-all duration-200 ${theme === 'light' ? 'left-1 bg-amber-100' : 'left-12 bg-slate-700'}`}
+            aria-hidden="true"
+          ></span>
         </button>
       </div>
     </nav>
