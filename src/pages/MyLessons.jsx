@@ -418,9 +418,9 @@ export default function MyLessons() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-base-100 rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+            <div className="sticky top-0 bg-base-100 border-b border-base-300 px-6 py-4 flex items-center justify-between">
               <h3 className="text-xl font-bold">
                 {modalMode === 'create' && 'Add Lesson'}
                 {modalMode === 'edit' && 'Edit Lesson'}
@@ -428,7 +428,7 @@ export default function MyLessons() {
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-2xl font-bold text-gray-500 hover:text-gray-700"
+                className="text-2xl font-bold text-base-content/60 hover:text-base-content"
               >
                 ✕
               </button>
@@ -440,56 +440,56 @@ export default function MyLessons() {
                 // View Mode
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author</label>
-                    <p className="text-gray-900">{user?.displayName || user?.email || 'Anonymous'}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Author</label>
+                    <p className="text-base-content">{user?.displayName || user?.email || 'Anonymous'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author Email</label>
-                    <p className="text-gray-900">{user?.email || 'Not provided'}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Author Email</label>
+                    <p className="text-base-content">{user?.email || 'Not provided'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author Photo</label>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Author Photo</label>
                     {user?.photoURL ? (
                       <img src={user.photoURL} alt={user.displayName} className="w-20 h-20 rounded-full object-cover" />
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+                      <div className="w-20 h-20 rounded-full bg-base-300 flex items-center justify-center text-base-content font-semibold">
                         {(user?.displayName || user?.email || 'U').charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
-                    <p className="text-gray-900">{formData.title}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Title</label>
+                    <p className="text-base-content">{formData.title}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-                    <p className="text-gray-900">{formData.description}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Description</label>
+                    <p className="text-base-content">{formData.description}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
-                    <p className="text-gray-900">{formData.category}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Category</label>
+                    <p className="text-base-content">{formData.category}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Emotional Tone</label>
-                    <p className="text-gray-900">{formData.emotionalTone}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Emotional Tone</label>
+                    <p className="text-base-content">{formData.emotionalTone}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Privacy</label>
-                    <p className="text-gray-900">{formData.privacy === 'public' ? '🌍 Public' : '🔒 Private'}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Privacy</label>
+                    <p className="text-base-content">{formData.privacy === 'public' ? '🌍 Public' : '🔒 Private'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Access Level</label>
-                    <p className="text-gray-900">{formData.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Access Level</label>
+                    <p className="text-base-content">{formData.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}</p>
                   </div>
                   {formData.featuredImage && (
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Featured Image</label>
+                      <label className="block text-sm font-semibold text-base-content/70 mb-1">Featured Image</label>
                       <img src={formData.featuredImage} alt="Featured" className="max-w-xs rounded-lg" />
                     </div>
                   )}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Content</label>
-                    <p className="text-gray-900 whitespace-pre-wrap">{formData.content}</p>
+                    <label className="block text-sm font-semibold text-base-content/70 mb-1">Content</label>
+                    <p className="text-base-content whitespace-pre-wrap">{formData.content}</p>
                   </div>
                 </div>
               ) : (
@@ -501,7 +501,7 @@ export default function MyLessons() {
                       type="text"
                       value={user?.displayName || user?.email || 'Anonymous'}
                       disabled
-                      className="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                      className="w-full px-4 py-2 border border-base-300 rounded-lg bg-base-200 text-base-content cursor-not-allowed"
                     />
                   </div>
 
@@ -512,7 +512,7 @@ export default function MyLessons() {
                       value={user?.email || ''}
                       disabled
                       placeholder="No email available"
-                      className="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                      className="w-full px-4 py-2 border border-base-300 rounded-lg bg-base-200 text-base-content cursor-not-allowed"
                     />
                   </div>
 
@@ -525,14 +525,14 @@ export default function MyLessons() {
                           value={user?.photoURL || ''}
                           disabled
                           placeholder="No photo URL available"
-                          className="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                          className="w-full px-4 py-2 border border-base-300 rounded-lg bg-base-200 text-base-content cursor-not-allowed"
                         />
                       </div>
                       <div className="flex-shrink-0">
                         {user?.photoURL ? (
                           <img src={user.photoURL} alt={user.displayName} className="w-16 h-16 rounded-lg object-cover" />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gray-300 flex items-center justify-center text-gray-600 font-semibold text-xl">
+                          <div className="w-16 h-16 rounded-lg bg-base-300 flex items-center justify-center text-base-content font-semibold text-xl">
                             {(user?.displayName || user?.email || 'U').charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -548,7 +548,7 @@ export default function MyLessons() {
                       value={formData.title}
                       onChange={handleChange}
                       placeholder="Enter lesson title"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="input input-bordered w-full"
                       required
                     />
                   </div>
@@ -561,7 +561,7 @@ export default function MyLessons() {
                       onChange={handleChange}
                       placeholder="Enter lesson description (2-3 sentences)"
                       rows={3}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="textarea textarea-bordered w-full"
                       required
                     />
                   </div>
@@ -573,7 +573,7 @@ export default function MyLessons() {
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="select select-bordered w-full"
                         required
                       >
                         {categories.map(cat => (
@@ -588,7 +588,7 @@ export default function MyLessons() {
                         name="emotionalTone"
                         value={formData.emotionalTone}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="select select-bordered w-full"
                         required
                       >
                         {tones.map(tone => (
@@ -606,7 +606,7 @@ export default function MyLessons() {
                       value={formData.featuredImage}
                       onChange={handleChange}
                       placeholder="https://example.com/image.jpg"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="input input-bordered w-full"
                     />
                     {formData.featuredImage && (
                       <img src={formData.featuredImage} alt="Preview" className="max-w-xs mt-2 rounded-lg" />
@@ -620,7 +620,7 @@ export default function MyLessons() {
                         name="privacy"
                         value={formData.privacy}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="select select-bordered w-full"
                         required
                       >
                         <option value="public">🌍 Public</option>
@@ -637,7 +637,7 @@ export default function MyLessons() {
                         name="accessLevel"
                         value={formData.accessLevel}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="select select-bordered w-full"
                         required
                       >
                         <option value="free">🆓 Free</option>
@@ -656,12 +656,12 @@ export default function MyLessons() {
                       onChange={handleChange}
                       placeholder="Enter full lesson content / story"
                       rows={6}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="textarea textarea-bordered w-full"
                       required
                     />
                   </div>
 
-                  <div className="flex gap-3 justify-end pt-4 border-t">
+                  <div className="flex gap-3 justify-end pt-4 border-t border-base-300">
                     <button
                       type="button"
                       onClick={() => setShowModal(false)}
