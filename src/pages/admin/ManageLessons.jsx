@@ -11,6 +11,7 @@ export default function ManageLessons() {
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState('create') // create, edit, view
   const [selectedLesson, setSelectedLesson] = useState(null)
+  const [theme, setTheme] = useState('light')
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -33,6 +34,19 @@ export default function ManageLessons() {
 
   useEffect(() => {
     fetchLessons()
+  }, [])
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light'
+    setTheme(savedTheme)
+  }, [])
+
+  useEffect(() => {
+    const handleThemeChange = (e) => {
+      setTheme(e.detail || localStorage.getItem('theme') || 'light')
+    }
+    window.addEventListener('app-theme-changed', handleThemeChange)
+    return () => window.removeEventListener('app-theme-changed', handleThemeChange)
   }, [])
 
   const fetchLessons = async () => {
@@ -198,6 +212,21 @@ export default function ManageLessons() {
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
     return num.toString()
   }
+
+  const isDark = theme === 'dark'
+  const inputClass = isDark
+    ? 'w-full px-4 py-2 border rounded-lg bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary'
+    : 'w-full px-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary'
+  const selectClass = isDark
+    ? 'w-full px-4 py-2 border rounded-lg bg-slate-800 border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary'
+    : 'w-full px-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary'
+  const textareaClass = isDark
+    ? 'w-full px-4 py-2 border rounded-lg bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary'
+    : 'w-full px-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary'
+  const labelClass = isDark
+    ? 'block text-sm font-semibold mb-1 text-slate-200'
+    : 'block text-sm font-semibold text-gray-700 mb-1'
+  const viewTextClass = isDark ? 'text-slate-100' : 'text-gray-900'
 
   return (
     <>
@@ -402,8 +431,8 @@ export default function ManageLessons() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+          <div className={`rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto ${isDark ? 'bg-slate-900 text-slate-100 border border-slate-700' : 'bg-white text-gray-900'}`}>
+            <div className={`sticky top-0 border-b px-6 py-4 flex items-center justify-between ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
               <h3 className="text-xl font-bold">
                 {modalMode === 'create' && 'Add Lesson'}
                 {modalMode === 'edit' && 'Edit Lesson'}
@@ -411,7 +440,7 @@ export default function ManageLessons() {
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-2xl font-bold text-gray-500 hover:text-gray-700"
+                className={`text-2xl font-bold ${isDark ? 'text-slate-400 hover:text-slate-200' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 ✕
               </button>
@@ -421,46 +450,46 @@ export default function ManageLessons() {
               {modalMode === 'view' ? (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
-                    <p className="text-gray-900">{formData.title}</p>
+                    <label className={labelClass}>Title</label>
+                    <p className={viewTextClass}>{formData.title}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-                    <p className="text-gray-900">{formData.description}</p>
+                    <label className={labelClass}>Description</label>
+                    <p className={viewTextClass}>{formData.description}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author Email</label>
-                    <p className="text-gray-900">{formData.authorEmail || 'Not provided'}</p>
+                    <label className={labelClass}>Author Email</label>
+                    <p className={viewTextClass}>{formData.authorEmail || 'Not provided'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                    <p className="text-gray-900 capitalize">{formData.status}</p>
+                    <label className={labelClass}>Status</label>
+                    <p className={`${viewTextClass} capitalize`}>{formData.status}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
-                    <p className="text-gray-900">{formData.category}</p>
+                    <label className={labelClass}>Category</label>
+                    <p className={viewTextClass}>{formData.category}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Emotional Tone</label>
-                    <p className="text-gray-900">{formData.emotionalTone}</p>
+                    <label className={labelClass}>Emotional Tone</label>
+                    <p className={viewTextClass}>{formData.emotionalTone}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Privacy</label>
-                    <p className="text-gray-900">{formData.privacy === 'public' ? '🌍 Public' : '🔒 Private'}</p>
+                    <label className={labelClass}>Privacy</label>
+                    <p className={viewTextClass}>{formData.privacy === 'public' ? '🌍 Public' : '🔒 Private'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Access Level</label>
-                    <p className="text-gray-900">{formData.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}</p>
+                    <label className={labelClass}>Access Level</label>
+                    <p className={viewTextClass}>{formData.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}</p>
                   </div>
                   {formData.featuredImage && (
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Featured Image</label>
+                      <label className={labelClass}>Featured Image</label>
                       <img src={formData.featuredImage} alt="Featured" className="max-w-xs rounded-lg" />
                     </div>
                   )}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Content</label>
-                    <p className="text-gray-900 whitespace-pre-wrap">{formData.content}</p>
+                    <label className={labelClass}>Content</label>
+                    <p className={`${viewTextClass} whitespace-pre-wrap`}>{formData.content}</p>
                   </div>
                 </div>
               ) : (
@@ -473,7 +502,7 @@ export default function ManageLessons() {
                       value={formData.title}
                       onChange={handleChange}
                       placeholder="Enter lesson title"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={inputClass}
                       required
                     />
                   </div>
@@ -486,7 +515,7 @@ export default function ManageLessons() {
                       onChange={handleChange}
                       placeholder="Enter lesson description (2-3 sentences)"
                       rows={3}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={textareaClass}
                       required
                     />
                   </div>
@@ -499,7 +528,7 @@ export default function ManageLessons() {
                       value={formData.authorEmail}
                       onChange={handleChange}
                       placeholder="author@example.com"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={inputClass}
                     />
                   </div>
 
@@ -512,7 +541,7 @@ export default function ManageLessons() {
                         value={formData.authorName}
                         onChange={handleChange}
                         placeholder="Display name"
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={inputClass}
                       />
                     </div>
                     <div>
@@ -523,7 +552,7 @@ export default function ManageLessons() {
                         value={formData.authorPhotoURL}
                         onChange={handleChange}
                         placeholder="https://example.com/photo.jpg"
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={inputClass}
                       />
                     </div>
                   </div>
@@ -532,7 +561,7 @@ export default function ManageLessons() {
                     {formData.authorPhotoURL ? (
                       <img src={formData.authorPhotoURL} alt={formData.authorName} className="w-16 h-16 rounded-lg object-cover" />
                     ) : (
-                      <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center text-gray-600 font-semibold">
+                      <div className={`w-16 h-16 rounded-lg flex items-center justify-center font-semibold ${isDark ? 'bg-slate-800 text-slate-200 border border-slate-700' : 'bg-gray-200 text-gray-600'}`}>
                         {(formData.authorName || 'U').charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -545,7 +574,7 @@ export default function ManageLessons() {
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={selectClass}
                         required
                       >
                         {categories.map(cat => (
@@ -560,7 +589,7 @@ export default function ManageLessons() {
                         name="emotionalTone"
                         value={formData.emotionalTone}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={selectClass}
                         required
                       >
                         {tones.map(tone => (
@@ -578,7 +607,7 @@ export default function ManageLessons() {
                       value={formData.featuredImage}
                       onChange={handleChange}
                       placeholder="https://example.com/image.jpg"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={inputClass}
                     />
                     {formData.featuredImage && (
                       <img src={formData.featuredImage} alt="Preview" className="max-w-xs mt-2 rounded-lg" />
@@ -592,7 +621,7 @@ export default function ManageLessons() {
                         name="privacy"
                         value={formData.privacy}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={selectClass}
                         required
                       >
                         <option value="public">🌍 Public</option>
@@ -606,7 +635,7 @@ export default function ManageLessons() {
                         name="accessLevel"
                         value={formData.accessLevel}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={selectClass}
                         required
                       >
                         <option value="free">🆓 Free</option>
@@ -622,7 +651,7 @@ export default function ManageLessons() {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={selectClass}
                       >
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
@@ -638,7 +667,7 @@ export default function ManageLessons() {
                       onChange={handleChange}
                       placeholder="Enter full lesson content / story"
                       rows={6}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={textareaClass}
                       required
                     />
                   </div>

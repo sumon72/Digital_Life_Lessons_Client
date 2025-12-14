@@ -35,15 +35,16 @@ export default function AdminLayout({ children }) {
     { icon: '👥', label: 'Manage Users', path: '/dashboard/admin/users', adminOnly: true },
     { icon: '📚', label: 'Manage Lessons', path: '/dashboard/admin/lessons', adminOnly: true },
     { icon: '🚩', label: 'Reported Lessons', path: '/dashboard/admin/reported', adminOnly: true },
-    { icon: '⚙️', label: 'Settings', path: '/dashboard/admin/settings', adminOnly: true }
+    // { icon: '⚙️', label: 'Settings', path: '/dashboard/admin/settings', adminOnly: true }
   ]
 
   // Filter nav items based on user role
   const visibleNavItems = navItems.filter(item => !item.adminOnly || isAdmin)
 
   const isActive = (path) => {
+    if (path === '/dashboard/admin') return location.pathname === '/dashboard/admin'
     if (path === '/dashboard') return location.pathname === '/dashboard'
-    return location.pathname.startsWith(path)
+    return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
   return (

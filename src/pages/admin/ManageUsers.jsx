@@ -10,6 +10,7 @@ export default function ManageUsers() {
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState('create') // create, edit, view
   const [selectedUser, setSelectedUser] = useState(null)
+  const [theme, setTheme] = useState('light')
   const [formData, setFormData] = useState({
     displayName: '',
     email: '',
@@ -24,6 +25,19 @@ export default function ManageUsers() {
   // Fetch users on mount
   useEffect(() => {
     fetchUsers()
+  }, [])
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light'
+    setTheme(savedTheme)
+  }, [])
+
+  useEffect(() => {
+    const handleThemeChange = (e) => {
+      setTheme(e.detail || localStorage.getItem('theme') || 'light')
+    }
+    window.addEventListener('app-theme-changed', handleThemeChange)
+    return () => window.removeEventListener('app-theme-changed', handleThemeChange)
   }, [])
 
   const fetchUsers = async () => {
@@ -191,6 +205,18 @@ export default function ManageUsers() {
         return 'bg-gray-100 text-gray-700'
     }
   }
+
+  const isDark = theme === 'dark'
+  const inputClass = isDark
+    ? 'w-full px-4 py-2 border rounded-lg bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary'
+    : 'w-full px-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary'
+  const selectClass = isDark
+    ? 'w-full px-4 py-2 border rounded-lg bg-slate-800 border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary'
+    : 'w-full px-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary'
+  const labelClass = isDark
+    ? 'block text-sm font-semibold mb-1 text-slate-200'
+    : 'block text-sm font-semibold text-gray-700 mb-1'
+  const viewTextClass = isDark ? 'text-slate-100' : 'text-gray-900'
 
   return (
     <>
@@ -371,9 +397,9 @@ export default function ManageUsers() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto ${isDark ? 'bg-slate-900 text-slate-100 border border-slate-700' : 'bg-white text-gray-900'}`}>
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+            <div className={`sticky top-0 border-b px-6 py-4 flex items-center justify-between ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
               <h3 className="text-xl font-bold">
                 {modalMode === 'create' && 'Add New User'}
                 {modalMode === 'edit' && 'Edit User'}
@@ -381,7 +407,7 @@ export default function ManageUsers() {
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-2xl font-bold text-gray-500 hover:text-gray-700"
+                className={`text-2xl font-bold ${isDark ? 'text-slate-400 hover:text-slate-200' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 ✕
               </button>
@@ -393,20 +419,20 @@ export default function ManageUsers() {
                 // View Mode
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Name</label>
-                    <p className="text-gray-900">{formData.displayName}</p>
+                    <label className={labelClass}>Name</label>
+                    <p className={viewTextClass}>{formData.displayName}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                    <p className="text-gray-900">{formData.email}</p>
+                    <label className={labelClass}>Email</label>
+                    <p className={viewTextClass}>{formData.email}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Role</label>
-                    <p className="text-gray-900 capitalize">{formData.role || 'user'}</p>
+                    <label className={labelClass}>Role</label>
+                    <p className={`${viewTextClass} capitalize`}>{formData.role || 'user'}</p>
                   </div>
                   {formData.photoURL && (
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Photo</label>
+                      <label className={labelClass}>Photo</label>
                       <img src={formData.photoURL} alt={formData.displayName} className="w-24 h-24 rounded-lg object-cover" />
                     </div>
                   )}
@@ -422,7 +448,7 @@ export default function ManageUsers() {
                       value={formData.displayName}
                       onChange={handleChange}
                       placeholder="Enter user name"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={inputClass}
                       required
                       disabled={modalMode === 'edit'}
                     />
@@ -436,7 +462,7 @@ export default function ManageUsers() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Enter user email"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={inputClass}
                       required
                       disabled={modalMode === 'edit'}
                     />
@@ -450,7 +476,7 @@ export default function ManageUsers() {
                       value={formData.photoURL || ''}
                       onChange={handleChange}
                       placeholder="Enter photo URL"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={inputClass}
                     />
                   </div>
 
@@ -460,7 +486,7 @@ export default function ManageUsers() {
                       name="role"
                       value={formData.role || 'user'}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={selectClass}
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
