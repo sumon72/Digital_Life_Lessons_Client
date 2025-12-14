@@ -35,12 +35,20 @@ export default function PublicLessons() {
       console.log('All lessons from API:', response.data)
       console.log('Total lessons count:', response.data?.length || 0)
       
-      // Filter only public lessons
+      // Filter only public lessons (exclude drafts)
       // Logic: Show a lesson if:
-      // 1. It has privacy='public' (new lessons explicitly marked public), OR
-      // 2. It has no privacy field AND status='published' (existing published lessons)
+      // 1. status='published' (published lessons), AND
+      // 2. It has privacy='public' (new lessons explicitly marked public), OR
+      // 3. It has no privacy field (existing published lessons)
       const publicLessons = (response.data || []).filter(lesson => {
         console.log(`Checking lesson: ${lesson.title}, privacy: ${lesson.privacy}, status: ${lesson.status}`)
+        
+        // Must be published (not draft)
+        if (lesson.status !== 'published') {
+          console.log(`  → Excluded: status is '${lesson.status}' (not published)`)
+          return false
+        }
+        
         const isExplicitlyPublic = lesson.privacy === 'public' || lesson.privacy === 'Public'
         const isLegacyPublished = !lesson.privacy && lesson.status === 'published'
         const include = isExplicitlyPublic || isLegacyPublished

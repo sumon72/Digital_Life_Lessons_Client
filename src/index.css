@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   CENTRALIZED THEME COLORS
+   All primary colors are defined in tailwind.config.js
+   Primary: #4f46e5 (Indigo-600)
+   Primary Hover: #4338ca (light) / #6366f1 (dark)
+   Secondary: #06b6d4 (Cyan-500)
+   Premium/Warning: #fbbf24 (Amber-400/Gold)
+   
+   Usage:
+   - Buttons: btn-primary, btn-secondary, btn-warning (premium)
+   - Text: text-primary, text-secondary, text-warning
+   - Backgrounds: bg-primary, bg-secondary, bg-warning
+   - Badges: badge-primary, badge-warning (premium)
+   ============================================ */
+
+@layer components {
+  /* Premium Button Styles */
+  .btn-premium {
+    @apply btn btn-warning gap-2 font-semibold shadow-lg;
+  }
+  
+  .btn-premium:hover {
+    @apply shadow-xl brightness-110;
+  }
+  
+  /* Premium Badge */
+  .badge-premium {
+    @apply badge badge-warning gap-1 font-semibold;
+  }
+  
+  /* Premium Card/Section */
+  .premium-card {
+    @apply bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/20 border-2 border-warning/30;
+  }
+  
+  /* Premium Text Gradient */
+  .text-premium {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-yellow-500 font-bold;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
