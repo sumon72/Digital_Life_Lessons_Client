@@ -14,10 +14,15 @@ export default function AdminDashboardHome() {
     todayNewLessons: 0,
     activeContributors: []
   })
+  const [growthData, setGrowthData] = useState({
+    lessonGrowth: [],
+    userGrowth: []
+  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchAdminStats()
+    fetchGrowthAnalytics()
   }, [])
 
   const fetchAdminStats = async () => {
@@ -30,6 +35,16 @@ export default function AdminDashboardHome() {
       toast.error('Failed to load admin statistics')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchGrowthAnalytics = async () => {
+    try {
+      const response = await api.get('/admin/growth-analytics')
+      setGrowthData(response.data)
+    } catch (err) {
+      console.error('Error fetching growth analytics:', err)
+      console.log('Growth analytics fetch failed - continuing without charts')
     }
   }
 
@@ -188,6 +203,73 @@ export default function AdminDashboardHome() {
             )}
           </div>
         </div>
-    </div>
+        {/* Growth Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Lesson Growth Chart */}
+          <div className="card bg-base-100 shadow-lg">
+            <div className="card-body">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="card-title">📊 Lesson Growth (Last 30 Days)</h2>
+              </div>
+              {growthData.lessonGrowth && growthData.lessonGrowth.length > 0 ? (
+                <div className="space-y-3">
+                  {(() => {
+                    const maxVal = Math.max(...growthData.lessonGrowth.map(c => c.count), 1)
+                    return growthData.lessonGrowth.map((day) => {
+                      const width = (day.count / maxVal) * 100
+                      return (
+                        <div key={day.date} className="flex items-center gap-3">
+                          <div className="w-20 text-sm text-base-content/70 truncate">{day.date}</div>
+                          <div className="flex-1 h-6 bg-base-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all"
+                              style={{ width: `${width}%` }}
+                            ></div>
+                          </div>
+                          <div className="w-10 text-right text-sm font-semibold text-base-content">{day.count}</div>
+                        </div>
+                      )
+                    })
+                  })()}
+                </div>
+              ) : (
+                <p className="text-base-content/60 text-center py-8">No lesson data available</p>
+              )}
+            </div>
+          </div>
+
+          {/* User Growth Chart */}
+          <div className="card bg-base-100 shadow-lg">
+            <div className="card-body">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="card-title">👥 User Growth (Last 30 Days)</h2>
+              </div>
+              {growthData.userGrowth && growthData.userGrowth.length > 0 ? (
+                <div className="space-y-3">
+                  {(() => {
+                    const maxVal = Math.max(...growthData.userGrowth.map(c => c.count), 1)
+                    return growthData.userGrowth.map((day) => {
+                      const width = (day.count / maxVal) * 100
+                      return (
+                        <div key={day.date} className="flex items-center gap-3">
+                          <div className="w-20 text-sm text-base-content/70 truncate">{day.date}</div>
+                          <div className="flex-1 h-6 bg-base-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-green-400 to-green-600 transition-all"
+                              style={{ width: `${width}%` }}
+                            ></div>
+                          </div>
+                          <div className="w-10 text-right text-sm font-semibold text-base-content">{day.count}</div>
+                        </div>
+                      )
+                    })
+                  })()}
+                </div>
+              ) : (
+                <p className="text-base-content/60 text-center py-8">No user data available</p>
+              )}
+            </div>
+          </div>
+        </div>    </div>
   )
 }

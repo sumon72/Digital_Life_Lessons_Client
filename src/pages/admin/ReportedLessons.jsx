@@ -146,19 +146,26 @@ export default function ReportedLessons() {
                             {item.lesson.title}
                           </div>
                           <div className="text-xs text-base-content/60">
-                            Posted on {new Date(item.lesson.createdAt).toLocaleDateString()}
+                            Posted on {item.lesson.createdAt ? new Date(item.lesson.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            }) : 'Unknown date'}
                           </div>
                         </td>
                         <td>
                           <div className="flex items-center gap-2">
                             <div className="avatar placeholder">
                               <div className="w-8 h-8 rounded-full bg-primary text-primary-content text-xs">
-                                <span>{item.lesson.author?.displayName?.[0] || 'U'}</span>
+                                <span>{item.lesson.author?.displayName?.[0] || 'A'}</span>
                               </div>
                             </div>
                             <div>
                               <div className="text-sm font-medium">
-                                {item.lesson.author?.displayName || 'Anonymous'}
+                                {item.lesson.author?.displayName || 'Unknown Author'}
+                              </div>
+                              <div className="text-xs text-base-content/50">
+                                {item.lesson.author?.email || 'unknown@example.com'}
                               </div>
                             </div>
                           </div>
@@ -175,7 +182,11 @@ export default function ReportedLessons() {
                         </td>
                         <td>
                           <div className="text-sm">
-                            {new Date(item.latestReportDate).toLocaleDateString()}
+                            {item.latestReportDate ? new Date(item.latestReportDate).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            }) : 'Unknown'}
                           </div>
                         </td>
                         <td>
@@ -218,15 +229,19 @@ export default function ReportedLessons() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="font-semibold">Author:</span>{' '}
-                    {selectedLesson.lesson.author?.displayName || 'Anonymous'}
+                    {selectedLesson.lesson.author?.displayName || 'Unknown Author'}
                   </div>
                   <div>
                     <span className="font-semibold">Category:</span>{' '}
-                    {selectedLesson.lesson.category}
+                    {selectedLesson.lesson.category || 'Uncategorized'}
                   </div>
                   <div>
                     <span className="font-semibold">Posted:</span>{' '}
-                    {new Date(selectedLesson.lesson.createdAt).toLocaleDateString()}
+                    {selectedLesson.lesson.createdAt ? new Date(selectedLesson.lesson.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'Unknown date'}
                   </div>
                   <div>
                     <span className="font-semibold">Total Reports:</span>{' '}
@@ -245,21 +260,21 @@ export default function ReportedLessons() {
                           <div className="avatar placeholder">
                             <div className="w-10 h-10 rounded-full bg-primary text-primary-content">
                               <span className="text-xs">
-                                {report.reportedBy?.displayName?.[0] || 'U'}
+                                {report.reporterInfo?.displayName?.[0] || 'U'}
                               </span>
                             </div>
                           </div>
                           <div>
                             <div className="font-semibold text-sm">
-                              {report.reportedBy?.displayName || 'Anonymous'}
+                              {report.reporterInfo?.displayName || 'Unknown Reporter'}
                             </div>
                             <div className="text-xs text-base-content/60">
-                              {report.reportedBy?.email}
+                              {report.reporterInfo?.email || report.reporterEmail || 'N/A'}
                             </div>
                           </div>
                         </div>
                         <div className="text-xs text-base-content/60">
-                          {new Date(report.reportedAt).toLocaleString()}
+                          {report.createdAt ? new Date(report.createdAt).toLocaleString() : 'Unknown date'}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
