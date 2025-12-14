@@ -801,9 +801,6 @@ export default function LessonDetail() {
       <section className="max-w-4xl mx-auto mb-12 px-4 md:px-8 lg:px-16">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-2xl font-bold">Similar Lessons You'll Love</h2>
-          <p className="text-sm text-base-content/60">
-            Based on category ({lesson?.category || 'N/A'}) or tone ({lesson?.emotionalTone || 'N/A'})
-          </p>
         </div>
         {loadingSimilar ? (
           <div className="flex justify-center py-12">
