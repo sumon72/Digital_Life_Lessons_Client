@@ -315,6 +315,7 @@ export default function MyLessons() {
             <table className="w-full text-sm">
               <thead className="bg-gray-100 border-b">
                 <tr>
+                  <th className="px-6 py-3 text-left font-semibold">Image</th>
                   <th className="px-6 py-3 text-left font-semibold">Title</th>
                   <th className="px-6 py-3 text-left font-semibold">Category</th>
                   <th className="px-6 py-3 text-left font-semibold">Privacy</th>
@@ -328,6 +329,23 @@ export default function MyLessons() {
                 {filteredLessons.length > 0 ? (
                   filteredLessons.map(lesson => (
                     <tr key={lesson._id} className="hover:bg-gray-50 transition">
+                      <td className="px-6 py-4">
+                        {lesson.featuredImage ? (
+                          <img 
+                            src={lesson.featuredImage} 
+                            alt={lesson.title}
+                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = 'https://via.placeholder.com/64x64/e5e7eb/6b7280?text=No+Image';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-gray-400 shadow-sm">
+                            <span className="text-2xl">📚</span>
+                          </div>
+                        )}
+                      </td>
                       <td className="px-6 py-4 font-medium truncate max-w-xs">
                         <div className="truncate">{lesson.title}</div>
                         <div className="text-xs text-gray-500 truncate">{lesson.description}</div>
@@ -386,7 +404,7 @@ export default function MyLessons() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
                       No lessons found
                     </td>
                   </tr>

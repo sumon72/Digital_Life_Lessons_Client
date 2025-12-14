@@ -59,7 +59,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/lesson/:id',
-        element: <ProtectedRoute><LessonDetail /></ProtectedRoute>,
+        element: <LessonDetail />,
       },
       {
         path: '/pricing',

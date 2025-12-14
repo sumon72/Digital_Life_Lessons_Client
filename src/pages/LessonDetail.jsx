@@ -23,6 +23,7 @@ export default function LessonDetail() {
   const [savedCount, setSavedCount] = useState(0)
   const [similarLessons, setSimilarLessons] = useState([])
   const [loadingSimilar, setLoadingSimilar] = useState(false)
+  const [authorLessonsCount, setAuthorLessonsCount] = useState(0)
 
   useEffect(() => {
     fetchLesson()
@@ -52,6 +53,11 @@ export default function LessonDetail() {
       
       // Fetch similar lessons
       fetchSimilarLessons()
+      
+      // Fetch author lessons count
+      if (response.data.authorEmail) {
+        fetchAuthorLessonsCount(response.data.authorEmail)
+      }
     } catch (err) {
       const errorMsg = err.response?.data?.error || 'Failed to fetch lesson'
       setError(errorMsg)
@@ -70,6 +76,15 @@ export default function LessonDetail() {
       console.error('Error fetching similar lessons:', err)
     } finally {
       setLoadingSimilar(false)
+    }
+  }
+
+  const fetchAuthorLessonsCount = async (authorEmail) => {
+    try {
+      const response = await api.get(`/lessons/author-email/${encodeURIComponent(authorEmail)}`)
+      setAuthorLessonsCount(response.data?.total || 0)
+    } catch (err) {
+      console.error('Error fetching author lessons count:', err)
     }
   }
 
@@ -415,36 +430,92 @@ export default function LessonDetail() {
               </div>
             </article>
 
-            {/* Author Section */}
-            <section className="card bg-base-100 shadow-lg mb-8">
+            {/* Author / Creator Section */}
+            <section className="card bg-gradient-to-br from-base-100 to-base-200 shadow-xl border border-base-300 mb-8">
               <div className="card-body">
-                <h2 className="card-title mb-6">About the Creator</h2>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                  <div className="flex items-center gap-4">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                  <span>✨</span>
+                  <span>About the Creator</span>
+                </h2>
+                
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+                  {/* Creator Profile Image */}
+                  <div className="flex-shrink-0">
                     {lesson.authorPhotoURL ? (
-                      <img
-                        src={lesson.authorPhotoURL}
-                        alt={lesson.authorName}
-                        className="w-20 h-20 rounded-full object-cover"
-                      />
+                      <div className="relative">
+                        <img
+                          src={lesson.authorPhotoURL}
+                          alt={lesson.authorName}
+                          className="w-32 h-32 rounded-full object-cover border-4 border-primary shadow-lg"
+                        />
+                        <div className="absolute -bottom-2 -right-2 bg-primary text-primary-content rounded-full p-3 shadow-lg">
+                          <span className="text-2xl">👤</span>
+                        </div>
+                      </div>
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-content flex items-center justify-center text-2xl font-bold">
+                      <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary via-secondary to-accent text-primary-content flex items-center justify-center text-4xl font-bold shadow-lg border-4 border-base-100">
                         {(lesson.authorName || 'U').charAt(0).toUpperCase()}
                       </div>
                     )}
-                    <div>
-                      <h3 className="text-xl font-bold">{lesson.authorName || lesson.author || 'Anonymous'}</h3>
-                      <p className="text-base-content/60">Lesson Creator</p>
+                  </div>
+
+                  {/* Creator Info */}
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-3xl font-bold mb-2">{lesson.authorName || lesson.author || 'Anonymous'}</h3>
+                    <p className="text-lg text-base-content/70 mb-6">🖊️ Lesson Creator & Contributor</p>
+                    
+                    {/* Creator Stats */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                      <div className="bg-base-100 rounded-lg p-4 shadow-md border border-base-300">
+                        <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                          <span className="text-2xl">📚</span>
+                          <p className="text-3xl font-bold text-primary">{authorLessonsCount}</p>
+                        </div>
+                        <p className="text-sm text-base-content/60 font-medium">Total Lessons</p>
+                      </div>
+                      
+                      <div className="bg-base-100 rounded-lg p-4 shadow-md border border-base-300">
+                        <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                          <span className="text-2xl">⭐</span>
+                          <p className="text-3xl font-bold text-warning">
+                            {lesson.accessLevel === 'premium' ? 'Premium' : 'Free'}
+                          </p>
+                        </div>
+                        <p className="text-sm text-base-content/60 font-medium">Content Tier</p>
+                      </div>
+                      
+                      <div className="bg-base-100 rounded-lg p-4 shadow-md border border-base-300">
+                        <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                          <span className="text-2xl">🌍</span>
+                          <p className="text-3xl font-bold text-success">
+                            {lesson.privacy === 'public' ? 'Public' : 'Private'}
+                          </p>
+                        </div>
+                        <p className="text-sm text-base-content/60 font-medium">Visibility</p>
+                      </div>
+                    </div>
+
+                    {/* View All Lessons Button */}
+                    <button
+                      onClick={() => navigate(`/author/${encodeURIComponent(lesson.authorName || lesson.author || 'Unknown')}`)}
+                      className="btn btn-primary btn-lg gap-3 w-full md:w-auto shadow-lg hover:shadow-xl transition-all"
+                    >
+                      <span className="text-xl">👤</span>
+                      <span className="font-semibold">View All Lessons by This Author</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Optional: Author Email Badge */}
+                {lesson.authorEmail && (
+                  <div className="mt-6 pt-6 border-t border-base-300">
+                    <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-base-content/60">
+                      <span>✉️</span>
+                      <span className="font-medium">{lesson.authorEmail}</span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => navigate(`/author/${lesson.authorName}`)}
-                    className="btn btn-primary gap-2"
-                  >
-                    <span>👤</span>
-                    <span>View All Lessons</span>
-                  </button>
-                </div>
+                )}
               </div>
             </section>
 
