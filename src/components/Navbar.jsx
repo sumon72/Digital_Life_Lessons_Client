@@ -50,6 +50,17 @@ export default function Navbar() {
     ? 'relative inline-flex items-center justify-between w-24 px-3 py-2 rounded-full border border-gray-200 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'
     : 'relative inline-flex items-center justify-between w-24 px-3 py-2 rounded-full border border-slate-700 bg-slate-900/80 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'
 
+  const isAuthed = isAuthenticated || !!user
+  const baseLinkClass = `font-semibold ${textColor} ${linkHover}`
+  const navLinks = [
+    { to: '/', label: 'Home', show: true },
+    { to: '/dashboard/add-lesson', label: 'Add Lesson', show: isAuthed },
+    { to: '/dashboard/my-lessons', label: 'My Lessons', show: isAuthed },
+    { to: '/public-lessons', label: 'Public Lessons', show: true },
+    { to: '/pricing', label: userPlan?.isPremium ? 'Pricing' : 'Upgrade', show: isAuthed },
+    { to: '/dashboard', label: 'Dashboard', show: isAuthed }
+  ].filter(link => link.show)
+
   return (
     <nav className={`navbar ${navBg} shadow-lg sticky top-0 z-50 justify-between h-20`}>
       {/* Left: Logo */}
@@ -59,10 +70,11 @@ export default function Navbar() {
 
       {/* Center: Menu */}
       <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2">
-        <li><Link to="/" className={`font-semibold ${textColor} ${linkHover}`}>Home</Link></li>
-        <li><Link to="/public-lessons" className={`font-semibold ${textColor} ${linkHover}`}>Public Lessons</Link></li>
-        <li><Link to="/pricing" className={`font-semibold ${textColor} ${linkHover}`}>Pricing</Link></li>
-        <li><Link to="/dashboard" className={`font-semibold ${textColor} ${linkHover}`}>Dashboard</Link></li>
+        {navLinks.map(link => (
+          <li key={link.to}>
+            <Link to={link.to} className={baseLinkClass}>{link.label}</Link>
+          </li>
+        ))}
       </ul>
 
       {/* Right: Auth & Theme Toggle */}
@@ -94,6 +106,7 @@ export default function Navbar() {
                   <li><span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700 inline-block">Premium ⭐</span></li>
                 ) : ("")}
                 <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/dashboard">Dashboard</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </ul>
             </div>

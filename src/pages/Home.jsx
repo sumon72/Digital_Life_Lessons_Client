@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../config/api'
+import { useUser } from '../context/UserContext'
 
 const sampleFeatured = [
   { id: 1, title: 'How to Navigate Tough Conversations', excerpt: 'Practical methods to stay calm and be heard.', author: 'A. Rivera', saved: 124 },
@@ -106,27 +107,37 @@ export default function Home() {
   const [contributors, setContributors] = useState([])
   const [mostSaved, setMostSaved] = useState([])
   const [loading, setLoading] = useState(true)
+  const { user } = useUser()
 
   useEffect(() => {
     let mounted = true
     async function fetchAll() {
       try {
-        // Fetch lessons from the backend
-        const lessonsRes = await api.get('/lessons')
-        
+        const [featuredRes, contributorsRes, mostSavedRes] = await Promise.allSettled([
+          api.get('/lessons/featured'),
+          api.get('/contributors/top-week'),
+          api.get('/lessons/most-saved')
+        ])
+
         if (!mounted) return
 
-        if (lessonsRes.status === 200 && lessonsRes.data) {
-          // Get published lessons and take first 3 as featured
-          const publishedLessons = lessonsRes.data.filter(lesson => lesson.status === 'published')
-          setFeatured(publishedLessons.slice(0, 3).length > 0 ? publishedLessons.slice(0, 3) : sampleFeatured)
+        if (featuredRes.status === 'fulfilled' && Array.isArray(featuredRes.value.data) && featuredRes.value.data.length > 0) {
+          setFeatured(featuredRes.value.data.slice(0, 3))
         } else {
           setFeatured(sampleFeatured)
         }
 
-        // Use sample data for contributors and most saved for now
-        setContributors(sampleContributors)
-        setMostSaved(sampleMostSaved)
+        if (contributorsRes.status === 'fulfilled' && Array.isArray(contributorsRes.value.data) && contributorsRes.value.data.length > 0) {
+          setContributors(contributorsRes.value.data)
+        } else {
+          setContributors(sampleContributors)
+        }
+
+        if (mostSavedRes.status === 'fulfilled' && Array.isArray(mostSavedRes.value.data) && mostSavedRes.value.data.length > 0) {
+          setMostSaved(mostSavedRes.value.data.slice(0, 3))
+        } else {
+          setMostSaved(sampleMostSaved)
+        }
       } catch (e) {
         console.error('Error fetching lessons:', e)
         setFeatured(sampleFeatured)
@@ -147,7 +158,9 @@ export default function Home() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-2xl font-bold">Featured Life Lessons</h3>
-          <Link to="/manage/lessons" className="text-sm text-primary underline">Manage lessons (admin)</Link>
+          {user?.role === 'admin' && (
+            <Link to="/dashboard/admin/lessons" className="text-sm text-primary underline">Manage lessons (admin)</Link>
+          )}
         </div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
