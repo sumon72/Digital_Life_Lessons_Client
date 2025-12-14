@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import api from '../config/api'
 import toast, { Toaster } from 'react-hot-toast'
+import SuccessAnimation from '../components/SuccessAnimation'
 
 export default function AddLesson() {
   const { user, userPlan } = useUser()
@@ -20,6 +21,7 @@ export default function AddLesson() {
   })
   
   const [submitting, setSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const categories = ['Personal', 'Work', 'Relationships', 'Health', 'Finance', 'Education', 'Spirituality']
   const tones = ['Happy', 'Sad', 'Motivated', 'Reflective', 'Hopeful', 'Angry', 'Grateful']
@@ -74,10 +76,13 @@ export default function AddLesson() {
       const response = await api.post('/lessons', payload)
       toast.success('Lesson created successfully!', { id: loadingToast })
       
-      // Navigate to My Lessons or the new lesson detail
+      // Show success animation
+      setShowSuccess(true)
+      
+      // Navigate to My Lessons after animation completes
       setTimeout(() => {
         navigate('/dashboard/my-lessons')
-      }, 1000)
+      }, 2000)
     } catch (err) {
       console.error('Error:', err.response?.data || err.message)
       toast.error(err.response?.data?.error || 'Failed to create the lesson.', { id: loadingToast })
@@ -372,6 +377,11 @@ export default function AddLesson() {
           </div>
         </div>
       </div>
+
+      <SuccessAnimation 
+        isVisible={showSuccess} 
+        onComplete={() => setShowSuccess(false)} 
+      />
     </>
   )
 }

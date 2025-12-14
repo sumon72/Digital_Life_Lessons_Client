@@ -7,7 +7,7 @@ import api from '../config/api'
 import toast from 'react-hot-toast'
 
 export default function Profile() {
-  const { user, userPlan } = useUser()
+  const { user, userPlan, refreshUser } = useUser()
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -69,7 +69,7 @@ export default function Profile() {
 
     try {
       const updates = {
-        displayName: name,
+        displayName: name || user.displayName,
       }
 
       // Update photo URL if it's different and not empty
@@ -82,13 +82,36 @@ export default function Profile() {
           img.src = photoURLInput
         })
         updates.photoURL = photoURLInput
+      } else if (!photoURLInput) {
+        // If photoURLInput is empty, don't update it
+        delete updates.photoURL
       }
 
+      // Step 1: Update Firebase Auth
       await updateProfile(auth.currentUser, updates)
       
-      // Update local state if photo URL was changed
+      // Step 2: Update backend MongoDB to keep in sync
+      const backendUpdate = {
+        displayName: updates.displayName,
+      }
       if (updates.photoURL) {
-        setPhotoURL(photoURLInput)
+        backendUpdate.photoURL = updates.photoURL
+      }
+
+      try {
+        await api.put(`/users/${user._id}`, backendUpdate)
+      } catch (err) {
+        console.error('Failed to sync profile to backend:', err)
+        // Continue even if backend sync fails
+      }
+
+      // Step 3: Refresh user context to get latest data from backend
+      await refreshUser()
+      
+      // Step 4: Update local state for immediate display
+      setName(updates.displayName || name)
+      if (updates.photoURL) {
+        setPhotoURL(updates.photoURL)
       }
 
       setSuccess('Profile updated successfully!')
@@ -97,6 +120,7 @@ export default function Profile() {
     } catch (err) {
       console.error('Error updating profile:', err)
       setError(err.message || 'Failed to update profile')
+      toast.error(err.message || 'Failed to update profile')
     } finally {
       setLoading(false)
     }

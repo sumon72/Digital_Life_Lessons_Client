@@ -6,8 +6,8 @@ import { useUser } from '../context/UserContext'
 import GoogleLoginButton from '../components/GoogleLoginButton'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('Admin@gmail.com')
+  const [password, setPassword] = useState('Admin@123')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

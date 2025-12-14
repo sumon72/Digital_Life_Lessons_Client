@@ -13,6 +13,9 @@ export default function PublicLessons() {
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [toneFilter, setToneFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
 
   const categories = ['all', 'Work', 'Personal', 'Relationships', 'Health', 'Finance', 'Education', 'Spirituality']
   const tones = ['all', 'Happy', 'Sad', 'Motivated', 'Reflective', 'Hopeful', 'Angry', 'Grateful']
@@ -23,7 +26,7 @@ export default function PublicLessons() {
 
   useEffect(() => {
     filterLessons()
-  }, [lessons, categoryFilter, toneFilter, searchQuery])
+  }, [lessons, categoryFilter, toneFilter, searchQuery, sortBy])
 
   const fetchPublicLessons = async () => {
     try {
@@ -77,6 +80,14 @@ export default function PublicLessons() {
       )
     }
 
+    // Sort
+    if (sortBy === 'newest') {
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    } else if (sortBy === 'mostSaved') {
+      filtered.sort((a, b) => (b.savedCount || 0) - (a.savedCount || 0))
+    }
+
+    setCurrentPage(1)
     setFilteredLessons(filtered)
   }
 
@@ -181,6 +192,21 @@ export default function PublicLessons() {
               />
             </div>
 
+            {/* Sort */}
+            <div className="mb-4">
+              <label className="label">
+                <span className="label-text font-semibold">Sort By</span>
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="select select-bordered w-full max-w-xs"
+              >
+                <option value="newest">📅 Newest First</option>
+                <option value="mostSaved">🔖 Most Saved</option>
+              </select>
+            </div>
+
             {/* Category Filter */}
             <div className="mb-4">
               <label className="label">
@@ -248,106 +274,131 @@ export default function PublicLessons() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredLessons.map((lesson) => {
-              const isPremiumLocked = lesson.accessLevel === 'premium' && !userPlan?.isPremium
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredLessons.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((lesson) => {
+                const isPremiumLocked = lesson.accessLevel === 'premium' && !userPlan?.isPremium
 
-              return (
-                <div
-                  key={lesson._id}
-                  className={`card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                    isPremiumLocked ? 'relative overflow-hidden' : ''
-                  }`}
-                >
-                  {/* Premium Overlay */}
-                  {isPremiumLocked && (
-                    <div className="absolute inset-0 bg-base-100/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="text-6xl mb-4">🔒</div>
-                      <h3 className="text-xl font-bold mb-2">Premium Lesson</h3>
-                      <p className="text-base-content/70 mb-4">
-                        Upgrade to Premium to unlock this wisdom
+                return (
+                  <div
+                    key={lesson._id}
+                    className={`card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ${
+                      isPremiumLocked ? 'relative overflow-hidden' : ''
+                    }`}
+                  >
+                    {/* Premium Overlay */}
+                    {isPremiumLocked && (
+                      <div className="absolute inset-0 bg-base-100/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6 text-center">
+                        <div className="text-6xl mb-4">🔒</div>
+                        <h3 className="text-xl font-bold mb-2">Premium Lesson</h3>
+                        <p className="text-base-content/70 mb-4">
+                          Upgrade to Premium to unlock this wisdom
+                        </p>
+                        <button
+                          onClick={() => navigate('/pricing')}
+                          className="btn btn-primary btn-sm"
+                        >
+                          ⭐ Upgrade Now
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Card Content */}
+                    <div className={`card-body ${isPremiumLocked ? 'blur-sm' : ''}`}>
+                      {/* Access Level Badge */}
+                      <div className="flex justify-between items-start mb-2">
+                        <span className={`badge ${
+                          lesson.accessLevel === 'premium'
+                            ? 'badge-warning'
+                            : 'badge-success'
+                        }`}>
+                          {lesson.accessLevel === 'premium' ? '⭐ Premium' : '🌍 Free'}
+                        </span>
+                        <span className="text-xs text-base-content/50">
+                          {formatDate(lesson.createdAt)}
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h2 className="card-title text-lg line-clamp-2">
+                        {lesson.title || 'Untitled Lesson'}
+                      </h2>
+
+                      {/* Description Preview */}
+                      <p className="text-sm text-base-content/70 line-clamp-3 mb-3">
+                        {lesson.description || lesson.whatHappened || 'No description available'}
                       </p>
-                      <button
-                        onClick={() => navigate('/pricing')}
-                        className="btn btn-primary btn-sm"
-                      >
-                        ⭐ Upgrade Now
-                      </button>
-                    </div>
-                  )}
 
-                  {/* Card Content */}
-                  <div className={`card-body ${isPremiumLocked ? 'blur-sm' : ''}`}>
-                    {/* Access Level Badge */}
-                    <div className="flex justify-between items-start mb-2">
-                      <span className={`badge ${
-                        lesson.accessLevel === 'premium'
-                          ? 'badge-warning'
-                          : 'badge-success'
-                      }`}>
-                        {lesson.accessLevel === 'premium' ? '⭐ Premium' : '🌍 Free'}
-                      </span>
-                      <span className="text-xs text-base-content/50">
-                        {formatDate(lesson.createdAt)}
-                      </span>
-                    </div>
+                      {/* Category & Tone */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <span className={`badge badge-sm ${getCategoryBadgeColor(lesson.category)}`}>
+                          {lesson.category || 'Uncategorized'}
+                        </span>
+                        <span className={`badge badge-sm ${getToneBadgeColor(lesson.emotionalTone)}`}>
+                          {lesson.emotionalTone || 'Neutral'}
+                        </span>
+                      </div>
 
-                    {/* Title */}
-                    <h2 className="card-title text-lg line-clamp-2">
-                      {lesson.title || 'Untitled Lesson'}
-                    </h2>
-
-                    {/* Description Preview */}
-                    <p className="text-sm text-base-content/70 line-clamp-3 mb-3">
-                      {lesson.description || lesson.whatHappened || 'No description available'}
-                    </p>
-
-                    {/* Category & Tone */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <span className={`badge badge-sm ${getCategoryBadgeColor(lesson.category)}`}>
-                        {lesson.category || 'Uncategorized'}
-                      </span>
-                      <span className={`badge badge-sm ${getToneBadgeColor(lesson.emotionalTone)}`}>
-                        {lesson.emotionalTone || 'Neutral'}
-                      </span>
-                    </div>
-
-                    {/* Creator Info */}
-                    <div className="flex items-center gap-3 pt-3 border-t border-base-300">
-                      {lesson.authorPhotoURL ? (
-                        <img
-                          src={lesson.authorPhotoURL}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                          {lesson.authorName?.charAt(0)?.toUpperCase() || 'U'}
+                      {/* Creator Info */}
+                      <div className="flex items-center gap-3 pt-3 border-t border-base-300">
+                        {lesson.authorPhotoURL ? (
+                          <img
+                            src={lesson.authorPhotoURL}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                            {lesson.authorName?.charAt(0)?.toUpperCase() || 'U'}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate">
+                            {lesson.authorName || 'Anonymous'}
+                          </p>
+                          <p className="text-xs text-base-content/50">
+                            Lesson Creator
+                          </p>
                         </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate">
-                          {lesson.authorName || 'Anonymous'}
-                        </p>
-                        <p className="text-xs text-base-content/50">
-                          Lesson Creator
-                        </p>
+                      </div>
+
+                      {/* See Details Button */}
+                      <div className="card-actions mt-4">
+                        <button
+                          onClick={() => handleSeeDetails(lesson._id, lesson)}
+                          className="btn btn-primary btn-block btn-sm"
+                        >
+                          👁️ See Details
+                        </button>
                       </div>
                     </div>
-
-                    {/* See Details Button */}
-                    <div className="card-actions mt-4">
-                      <button
-                        onClick={() => handleSeeDetails(lesson._id, lesson)}
-                        className="btn btn-primary btn-block btn-sm"
-                      >
-                        👁️ See Details
-                      </button>
-                    </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+
+            {/* Pagination */}
+            {Math.ceil(filteredLessons.length / itemsPerPage) > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="btn btn-sm btn-outline"
+                >
+                  ← Previous
+                </button>
+                <span className="text-sm text-base-content/70 px-4">
+                  Page {currentPage} of {Math.ceil(filteredLessons.length / itemsPerPage)}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredLessons.length / itemsPerPage)))}
+                  disabled={currentPage === Math.ceil(filteredLessons.length / itemsPerPage)}
+                  className="btn btn-sm btn-outline"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Call to Action for Non-Logged Users */}
