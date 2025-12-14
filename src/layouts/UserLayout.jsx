@@ -31,6 +31,7 @@ export default function UserLayout({ children }) {
 
   const navItems = [
     { icon: '🏠', label: 'Dashboard', path: '/dashboard' },
+    { icon: '➕', label: 'Add Lesson', path: '/dashboard/add-lesson' },
     { icon: '📚', label: 'My Lessons', path: '/dashboard/my-lessons' },
     { icon: '🔖', label: 'Favorites', path: '/dashboard/my-favorites' },
     { icon: '🌍', label: 'Browse Lessons', path: '/public-lessons' },

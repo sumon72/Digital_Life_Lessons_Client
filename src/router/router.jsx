@@ -20,6 +20,7 @@ import AuthorLessons from '../pages/AuthorLessons'
 // Dashboard Components
 import DashboardHome from '../pages/DashboardHome'
 import MyLessons from '../pages/MyLessons'
+import AddLesson from '../pages/AddLesson'
 import MyFavorites from '../pages/MyFavorites'
 
 // Admin Components
@@ -90,6 +91,16 @@ export const router = createBrowserRouter([
           <ProtectedRoute>
             <UserLayout>
               <MyLessons />
+            </UserLayout>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/dashboard/add-lesson',
+        element: (
+          <ProtectedRoute>
+            <UserLayout>
+              <AddLesson />
             </UserLayout>
           </ProtectedRoute>
         ),
