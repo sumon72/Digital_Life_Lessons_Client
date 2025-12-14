@@ -24,9 +24,18 @@ export default function LessonDetail() {
   const [similarLessons, setSimilarLessons] = useState([])
   const [loadingSimilar, setLoadingSimilar] = useState(false)
   const [authorLessonsCount, setAuthorLessonsCount] = useState(0)
+  
+  // Comment states
+  const [comments, setComments] = useState([])
+  const [commentText, setCommentText] = useState('')
+  const [loadingComments, setLoadingComments] = useState(false)
+  const [submittingComment, setSubmittingComment] = useState(false)
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editingCommentText, setEditingCommentText] = useState('')
 
   useEffect(() => {
     fetchLesson()
+    fetchComments()
   }, [id])
 
   const fetchLesson = async () => {
@@ -85,6 +94,97 @@ export default function LessonDetail() {
       setAuthorLessonsCount(response.data?.total || 0)
     } catch (err) {
       console.error('Error fetching author lessons count:', err)
+    }
+  }
+
+  const fetchComments = async () => {
+    try {
+      setLoadingComments(true)
+      console.log('Fetching comments for lesson:', id)
+      const response = await api.get(`/comments/lesson/${id}`)
+      console.log('Comments received:', response.data)
+      setComments(response.data || [])
+    } catch (err) {
+      console.error('Error fetching comments:', err)
+    } finally {
+      setLoadingComments(false)
+    }
+  }
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault()
+    
+    if (!user) {
+      toast.error('Please log in to comment')
+      navigate('/login')
+      return
+    }
+
+    if (!commentText.trim()) {
+      toast.error('Comment cannot be empty')
+      return
+    }
+
+    try {
+      setSubmittingComment(true)
+      const response = await api.post('/comments', {
+        lessonId: id,
+        content: commentText
+      })
+      setComments([response.data, ...comments])
+      setCommentText('')
+      toast.success('Comment posted successfully!')
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to post comment')
+    } finally {
+      setSubmittingComment(false)
+    }
+  }
+
+  const handleEditComment = (comment) => {
+    setEditingCommentId(comment._id)
+    setEditingCommentText(comment.content)
+  }
+
+  const handleUpdateComment = async (commentId) => {
+    if (!editingCommentText.trim()) {
+      toast.error('Comment cannot be empty')
+      return
+    }
+
+    try {
+      const response = await api.put(`/comments/${commentId}`, {
+        content: editingCommentText
+      })
+      setComments(comments.map(c => c._id === commentId ? response.data : c))
+      setEditingCommentId(null)
+      setEditingCommentText('')
+      toast.success('Comment updated!')
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to update comment')
+    }
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    const result = await Swal.fire({
+      title: 'Delete Comment?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    })
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/comments/${commentId}`)
+        setComments(comments.filter(c => c._id !== commentId))
+        toast.success('Comment deleted')
+      } catch (err) {
+        toast.error(err.response?.data?.error || 'Failed to delete comment')
+      }
     }
   }
 
@@ -516,6 +616,181 @@ export default function LessonDetail() {
                     </div>
                   </div>
                 )}
+              </div>
+            </section>
+
+            {/* Comments Section */}
+            <section className="card bg-base-100 shadow-xl mb-8">
+              <div className="card-body">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                  <span>💬</span>
+                  <span>Comments</span>
+                  <span className="badge badge-primary badge-lg ml-2">{comments.length}</span>
+                </h2>
+
+                {/* Comment Form */}
+                {user ? (
+                  <form onSubmit={handleSubmitComment} className="mb-8">
+                    <div className="flex gap-4 items-start">
+                      {/* User Avatar */}
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName}
+                          className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-content flex items-center justify-center text-lg font-bold flex-shrink-0">
+                          {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+
+                      {/* Comment Input */}
+                      <div className="flex-1">
+                        <textarea
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          placeholder="Share your thoughts about this lesson..."
+                          className="textarea textarea-bordered w-full min-h-[100px] focus:outline-none focus:ring-2 focus:ring-primary"
+                          disabled={submittingComment}
+                        />
+                        <div className="flex justify-between items-center mt-3">
+                          <span className="text-sm text-base-content/60">
+                            {commentText.length} characters
+                          </span>
+                          <button
+                            type="submit"
+                            disabled={submittingComment || !commentText.trim()}
+                            className="btn btn-primary gap-2"
+                          >
+                            {submittingComment ? (
+                              <>
+                                <span className="loading loading-spinner loading-sm"></span>
+                                <span>Posting...</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>💬</span>
+                                <span>Post Comment</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="bg-base-200 rounded-lg p-8 text-center mb-8">
+                    <p className="text-lg mb-4">Please log in to join the conversation</p>
+                    <button onClick={() => navigate('/login')} className="btn btn-primary gap-2">
+                      <span>🔐</span>
+                      <span>Log In to Comment</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Comments List */}
+                <div className="space-y-6">
+                  {loadingComments ? (
+                    <div className="flex justify-center py-12">
+                      <div className="loading loading-spinner loading-lg"></div>
+                    </div>
+                  ) : comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <div key={comment._id} className="border-b border-base-300 pb-6 last:border-0">
+                        <div className="flex gap-4">
+                          {/* Commenter Avatar */}
+                          {comment.userPhotoURL ? (
+                            <img
+                              src={comment.userPhotoURL}
+                              alt={comment.userName}
+                              className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-accent text-secondary-content flex items-center justify-center text-sm font-bold flex-shrink-0">
+                              {(comment.userName || 'U').charAt(0).toUpperCase()}
+                            </div>
+                          )}
+
+                          {/* Comment Content */}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="font-bold">{comment.userName}</span>
+                              <span className="text-xs text-base-content/60">
+                                {formatDate(comment.createdAt)}
+                              </span>
+                              {comment.updatedAt !== comment.createdAt && (
+                                <span className="text-xs text-base-content/40 italic">(edited)</span>
+                              )}
+                            </div>
+
+                            {/* Edit Mode */}
+                            {editingCommentId === comment._id ? (
+                              <div className="space-y-3">
+                                <textarea
+                                  value={editingCommentText}
+                                  onChange={(e) => setEditingCommentText(e.target.value)}
+                                  className="textarea textarea-bordered w-full min-h-[80px]"
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleUpdateComment(comment._id)}
+                                    className="btn btn-sm btn-primary"
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setEditingCommentId(null)
+                                      setEditingCommentText('')
+                                    }}
+                                    className="btn btn-sm btn-outline"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="text-base-content/90 whitespace-pre-wrap mb-3">
+                                  {comment.content}
+                                </p>
+
+                                {/* Action Buttons (Only for comment owner) */}
+                                {user && comment.userId === user._id && (
+                                  <div className="flex gap-3">
+                                    <button
+                                      onClick={() => handleEditComment(comment)}
+                                      className="text-sm text-primary hover:underline flex items-center gap-1"
+                                    >
+                                      <span>✏️</span>
+                                      <span>Edit</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteComment(comment._id)}
+                                      className="text-sm text-error hover:underline flex items-center gap-1"
+                                    >
+                                      <span>🗑️</span>
+                                      <span>Delete</span>
+                                    </button>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="text-6xl mb-4">💬</div>
+                      <h3 className="text-xl font-bold mb-2">No Comments Yet</h3>
+                      <p className="text-base-content/60">
+                        Be the first to share your thoughts about this lesson!
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
 
