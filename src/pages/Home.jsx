@@ -3,23 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../config/api'
 import { useUser } from '../context/UserContext'
 
-const sampleFeatured = [
-  { id: 1, title: 'How to Navigate Tough Conversations', excerpt: 'Practical methods to stay calm and be heard.', author: 'A. Rivera', saved: 124 },
-  { id: 2, title: 'Money Mindset for Young Adults', excerpt: 'Build sustainable habits that grow with you.', author: 'S. Lee', saved: 98 },
-  { id: 3, title: 'Setting Boundaries Without Guilt', excerpt: 'Simple rules to protect your time and energy.', author: 'M. Khan', saved: 86 }
-]
-
-const sampleContributors = [
-  { id: 1, name: 'Alex Rivera', avatar: '', contributions: 12 },
-  { id: 2, name: 'Sara Lee', avatar: '', contributions: 9 },
-  { id: 3, name: 'Maya Khan', avatar: '', contributions: 7 }
-]
-
-const sampleMostSaved = [
-  { id: 11, title: 'Mindful Mornings', saved: 420 },
-  { id: 22, title: 'Career Pivot Guide', saved: 387 },
-  { id: 33, title: 'Difficult Feedback', saved: 332 }
-]
+// Removed local samples; use DB-only data for contributors and most-saved
 
 function HeroSlider() {
   const slides = [
@@ -114,35 +98,38 @@ export default function Home() {
     async function fetchAll() {
       try {
         const [featuredRes, contributorsRes, mostSavedRes] = await Promise.allSettled([
-          api.get('/lessons/featured'),
+          api.get('/lessons?status=published'),
           api.get('/contributors/top-week'),
           api.get('/lessons/most-saved')
         ])
 
         if (!mounted) return
 
-        if (featuredRes.status === 'fulfilled' && Array.isArray(featuredRes.value.data) && featuredRes.value.data.length > 0) {
-          setFeatured(featuredRes.value.data.slice(0, 3))
+        if (featuredRes.status === 'fulfilled' && Array.isArray(featuredRes.value.data)) {
+          const list = (featuredRes.value.data || [])
+            .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+            .slice(0, 3)
+          setFeatured(list)
         } else {
-          setFeatured(sampleFeatured)
+          setFeatured([])
         }
 
-        if (contributorsRes.status === 'fulfilled' && Array.isArray(contributorsRes.value.data) && contributorsRes.value.data.length > 0) {
-          setContributors(contributorsRes.value.data)
+        if (contributorsRes.status === 'fulfilled' && Array.isArray(contributorsRes.value.data)) {
+          setContributors(contributorsRes.value.data || [])
         } else {
-          setContributors(sampleContributors)
+          setContributors([])
         }
 
-        if (mostSavedRes.status === 'fulfilled' && Array.isArray(mostSavedRes.value.data) && mostSavedRes.value.data.length > 0) {
-          setMostSaved(mostSavedRes.value.data.slice(0, 3))
+        if (mostSavedRes.status === 'fulfilled' && Array.isArray(mostSavedRes.value.data)) {
+          setMostSaved((mostSavedRes.value.data || []).slice(0, 3))
         } else {
-          setMostSaved(sampleMostSaved)
+          setMostSaved([])
         }
       } catch (e) {
         console.error('Error fetching lessons:', e)
-        setFeatured(sampleFeatured)
-        setContributors(sampleContributors)
-        setMostSaved(sampleMostSaved)
+        setFeatured([])
+        setContributors([])
+        setMostSaved([])
       } finally {
         if (mounted) setLoading(false)
       }
@@ -168,19 +155,24 @@ export default function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featured.map(f => (
-              <article key={f._id} className="p-6 bg-base-100 rounded-lg shadow hover:shadow-md transition">
-                <h4 className="text-lg font-semibold">{f.title}</h4>
-                <p className="mt-2 text-sm text-neutral-600 line-clamp-2">{f.content}</p>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="text-sm text-neutral-500">By {f.author}</div>
-                  <div className="badge badge-sm">{f.status}</div>
-                </div>
-                <div className="mt-4">
-                  <Link to={`/lessons/${f._id}`} className="btn btn-outline btn-sm">Read</Link>
-                </div>
-              </article>
-            ))}
+            {featured.map(f => {
+              const authorLabel = f.authorName || f.author?.displayName || f.authorEmail || f.author || 'Unknown Author'
+              const desc = f.description || f.content || f.excerpt || ''
+              const id = f._id || f.id
+              return (
+                <article key={id} className="p-6 bg-base-100 rounded-lg shadow hover:shadow-md transition">
+                  <h4 className="text-lg font-semibold">{f.title}</h4>
+                  <p className="mt-2 text-sm text-neutral-600 line-clamp-2">{desc}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="text-sm text-neutral-500">By {authorLabel}</div>
+                    <div className="badge badge-sm">{f.status || 'published'}</div>
+                  </div>
+                  <div className="mt-4">
+                    <Link to={`/lesson/${id}`} className="btn btn-outline btn-sm">Read</Link>
+                  </div>
+                </article>
+              )
+            })}
           </div>
         )}
       </section>
@@ -210,7 +202,6 @@ export default function Home() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-2xl font-bold">Top Contributors This Week</h3>
-          <Link to="/contributors" className="text-sm text-primary underline">See all</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {contributors.map(c => (
@@ -228,18 +219,21 @@ export default function Home() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-2xl font-bold">Most Saved Lessons</h3>
-          <Link to="/lessons" className="text-sm text-primary underline">Browse all</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {mostSaved.map(m => (
-            <div key={m.id} className="p-4 bg-base-100 rounded-lg shadow">
-              <div className="font-semibold">{m.title}</div>
-              <div className="text-sm text-neutral-500 mt-2">Saved {m.saved} times</div>
-              <div className="mt-3">
-                <Link to={`/lessons/${m.id}`} className="btn btn-outline btn-sm">Open</Link>
+          {mostSaved.map(m => {
+            const mid = m._id || m.id
+            const saved = m.savedCount ?? m.saved
+            return (
+              <div key={mid} className="p-4 bg-base-100 rounded-lg shadow">
+                <div className="font-semibold">{m.title}</div>
+                <div className="text-sm text-neutral-500 mt-2">Saved {saved} times</div>
+                <div className="mt-3">
+                  <Link to={`/lesson/${mid}`} className="btn btn-outline btn-sm">Open</Link>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </section>
     </main>

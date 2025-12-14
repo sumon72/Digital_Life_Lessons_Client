@@ -24,7 +24,8 @@ export default function ManageLessons() {
     status: 'draft',
     authorName: '',
     authorPhotoURL: '',
-    authorEmail: ''
+    authorEmail: '',
+    featured: false
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -78,7 +79,8 @@ export default function ManageLessons() {
       status: 'draft',
       authorName: '',
       authorPhotoURL: '',
-      authorEmail: ''
+      authorEmail: '',
+      featured: false
     })
     setSelectedLesson(null)
     setShowModal(true)
@@ -87,14 +89,14 @@ export default function ManageLessons() {
   const handleView = (lesson) => {
     setModalMode('view')
     setSelectedLesson(lesson)
-    setFormData(lesson)
+    setFormData({ ...lesson, featured: !!lesson.featured })
     setShowModal(true)
   }
 
   const handleEdit = (lesson) => {
     setModalMode('edit')
     setSelectedLesson(lesson)
-    setFormData(lesson)
+    setFormData({ ...lesson, featured: !!lesson.featured })
     setShowModal(true)
   }
 
@@ -155,7 +157,8 @@ export default function ManageLessons() {
         status: formData.status,
         authorName: formData.authorName,
         authorEmail: formData.authorEmail || '',
-        authorPhotoURL: formData.authorPhotoURL || ''
+        authorPhotoURL: formData.authorPhotoURL || '',
+        featured: !!formData.featured
       }
 
       if (modalMode === 'create') {
@@ -176,8 +179,8 @@ export default function ManageLessons() {
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = e.target
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
   const filteredLessons = lessons.filter((lesson) => {
@@ -322,6 +325,7 @@ export default function ManageLessons() {
                   <th className="px-6 py-3 text-left font-semibold">Privacy</th>
                   <th className="px-6 py-3 text-left font-semibold">Access</th>
                   <th className="px-6 py-3 text-left font-semibold">Status</th>
+                  <th className="px-6 py-3 text-left font-semibold">Featured</th>
                   <th className="px-6 py-3 text-left font-semibold">Stats</th>
                   <th className="px-6 py-3 text-left font-semibold">Date</th>
                   <th className="px-6 py-3 text-left font-semibold">Actions</th>
@@ -384,6 +388,13 @@ export default function ManageLessons() {
                         }`}>
                           {lesson.status || 'draft'}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {lesson.featured ? (
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">Featured</span>
+                        ) : (
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Standard</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-xs">
                         <div className="space-y-1">
@@ -480,6 +491,10 @@ export default function ManageLessons() {
                   <div>
                     <label className={labelClass}>Access Level</label>
                     <p className={viewTextClass}>{formData.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}</p>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Featured on Home</label>
+                    <p className={viewTextClass}>{formData.featured ? '🌟 Featured' : 'Standard'}</p>
                   </div>
                   {formData.featuredImage && (
                     <div>
@@ -656,6 +671,20 @@ export default function ManageLessons() {
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
                       </select>
+                    </div>
+                    <div className="flex items-center gap-3 pt-6">
+                      <input
+                        id="featured"
+                        type="checkbox"
+                        name="featured"
+                        checked={!!formData.featured}
+                        onChange={handleChange}
+                        className="toggle toggle-primary"
+                      />
+                      <div>
+                        <label htmlFor="featured" className="block text-sm font-semibold">Feature on Home</label>
+                        <p className="text-xs text-gray-500">Mark to show in the Featured Life Lessons section.</p>
+                      </div>
                     </div>
                   </div>
 
