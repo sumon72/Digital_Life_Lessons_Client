@@ -52,13 +52,14 @@ export default function Navbar() {
     : 'relative inline-flex items-center justify-between w-24 px-3 py-2 rounded-full border border-slate-700 bg-slate-900/80 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'
 
   const isAuthed = isAuthenticated || !!user
+  const isAdmin = user?.role === 'admin'
   const baseLinkClass = `font-semibold ${textColor} ${linkHover}`
   const navLinks = [
     { to: '/', label: 'Home', show: true },
-    { to: '/dashboard/add-lesson', label: 'Add Lesson', show: isAuthed },
-    { to: '/dashboard/my-lessons', label: 'My Lessons', show: isAuthed },
+    { to: '/dashboard/add-lesson', label: 'Add Lesson', show: isAuthed && !isAdmin },
+    { to: '/dashboard/my-lessons', label: 'My Lessons', show: isAuthed && !isAdmin },
     { to: '/public-lessons', label: 'Public Lessons', show: true },
-    { to: '/pricing', label: userPlan?.isPremium ? 'Pricing' : 'Upgrade', show: isAuthed },
+    { to: '/pricing', label: userPlan?.isPremium ? 'Pricing' : 'Upgrade', show: isAuthed && !isAdmin },
     { to: '/dashboard', label: 'Dashboard', show: isAuthed }
   ].filter(link => link.show)
 
