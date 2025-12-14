@@ -282,31 +282,6 @@ export default function Profile() {
               </div>
             </form>
 
-            {/* Account Info */}
-            <div className="divider my-8"></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm bg-base-200/50 rounded-lg p-6">
-              <div>
-                <p className="text-base-content/60 text-xs font-semibold uppercase tracking-wide">Account Created</p>
-                <p className="text-base-content font-semibold mt-1">
-                  {user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  }) : 'N/A'}
-                </p>
-              </div>
-              <div>
-                <p className="text-base-content/60 text-xs font-semibold uppercase tracking-wide">Last Sign-in</p>
-                <p className="text-base-content font-semibold mt-1">
-                  {user.metadata?.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  }) : 'N/A'}
-                </p>
-              </div>
-            </div>
-
             {/* Public Lessons Section */}
             <div className="divider my-8"></div>
             <div>
