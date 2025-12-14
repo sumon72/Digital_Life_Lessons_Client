@@ -108,7 +108,6 @@ export default function Navbar() {
                   <li><span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700 inline-block">Premium ⭐</span></li>
                 ) : ("")}
                 <li><Link to="/profile">Profile</Link></li>
-                <li><Link to="/dashboard">Dashboard</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </ul>
             </div>

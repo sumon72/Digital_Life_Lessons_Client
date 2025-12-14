@@ -36,7 +36,6 @@ export default function UserLayout({ children }) {
     { icon: '📚', label: 'My Lessons', path: '/dashboard/my-lessons' },
     { icon: '🔖', label: 'Favorites', path: '/dashboard/my-favorites' },
     { icon: '🌍', label: 'Browse Lessons', path: '/public-lessons' },
-    { icon: '👤', label: 'Profile', path: '/profile' }
   ]
 
   const isActive = (path) => {
