@@ -10,7 +10,9 @@ export default function UserDashboardHome() {
   const [stats, setStats] = useState({
     totalLessons: 0,
     totalSaved: 0,
-    recentLessons: []
+    totalLikes: 0,
+    recentLessons: [],
+    weeklyContributions: []
   })
   const [loading, setLoading] = useState(true)
 
@@ -29,6 +31,11 @@ export default function UserDashboardHome() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const formatWeekLabel = (isoDate) => {
+    if (!isoDate) return ''
+    return new Date(isoDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
   if (loading) {
@@ -83,10 +90,8 @@ export default function UserDashboardHome() {
           </div>
         </div>
 
-        
-
         {/* Recent Lessons */}
-        <div className="card bg-base-100 shadow-lg">
+        <div className="card bg-base-100 shadow-lg mb-8">
           <div className="card-body">
             <div className="flex items-center justify-between mb-4">
               <h2 className="card-title">Recently Added Lessons</h2>
@@ -120,6 +125,40 @@ export default function UserDashboardHome() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Weekly Analytics */}
+        <div className="card bg-base-100 shadow-lg mb-8">
+          <div className="card-body">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="card-title">Weekly Reflections</h2>
+              <span className="text-sm text-base-content/60">Last 8 weeks</span>
+            </div>
+            {stats.weeklyContributions && stats.weeklyContributions.length > 0 ? (
+              <div className="space-y-3">
+                {(() => {
+                  const maxVal = Math.max(...stats.weeklyContributions.map(c => c.count), 1)
+                  return stats.weeklyContributions.map((week) => {
+                    const width = (week.count / maxVal) * 100
+                    return (
+                      <div key={week.weekStart} className="flex items-center gap-3">
+                        <div className="w-20 text-sm text-base-content/70">{formatWeekLabel(week.weekStart)}</div>
+                        <div className="flex-1 h-3 bg-base-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary"
+                            style={{ width: `${width}%` }}
+                          ></div>
+                        </div>
+                        <div className="w-12 text-right text-sm font-semibold text-base-content">{week.count}</div>
+                      </div>
+                    )
+                  })
+                })()}
+              </div>
+            ) : (
+              <p className="text-base-content/60">No activity yet. Create your first lesson to see insights.</p>
             )}
           </div>
         </div>
