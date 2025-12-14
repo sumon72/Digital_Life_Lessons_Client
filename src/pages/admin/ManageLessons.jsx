@@ -5,17 +5,31 @@ import Swal from 'sweetalert2'
 
 export default function ManageLessons() {
   const [lessons, setLessons] = useState([])
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState('all') // all, public, private, free, premium
+  const [statusFilter, setStatusFilter] = useState('all') // all, published, draft
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState('create') // create, edit, view
   const [selectedLesson, setSelectedLesson] = useState(null)
-  const [formData, setFormData] = useState({ title: '', content: '', author: '', status: 'draft' })
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    content: '',
+    category: 'Personal',
+    emotionalTone: 'Hopeful',
+    featuredImage: '',
+    privacy: 'public',
+    accessLevel: 'free',
+    status: 'draft',
+    authorName: '',
+    authorPhotoURL: '',
+    authorEmail: ''
+  })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const filteredLessons = filter === 'all' ? lessons : lessons.filter(l => l.status === filter)
+  const categories = ['Personal', 'Work', 'Relationships', 'Health', 'Finance', 'Education', 'Spirituality']
+  const tones = ['Happy', 'Sad', 'Motivated', 'Reflective', 'Hopeful', 'Angry', 'Grateful']
 
-  // Fetch lessons on mount
   useEffect(() => {
     fetchLessons()
   }, [])
@@ -26,7 +40,6 @@ export default function ManageLessons() {
       setError(null)
       const response = await api.get('/lessons')
       setLessons(response.data || [])
-     
     } catch (err) {
       const errorMsg = 'Failed to fetch lessons: ' + (err.response?.data?.error || err.message)
       setError(errorMsg)
@@ -36,15 +49,26 @@ export default function ManageLessons() {
     }
   }
 
-  // CRUD: CREATE
   const handleCreate = () => {
     setModalMode('create')
-    setFormData({ title: '', content: '', author: '', status: 'draft' })
+    setFormData({
+      title: '',
+      description: '',
+      content: '',
+      category: 'Personal',
+      emotionalTone: 'Hopeful',
+      featuredImage: '',
+      privacy: 'public',
+      accessLevel: 'free',
+      status: 'draft',
+      authorName: '',
+      authorPhotoURL: '',
+      authorEmail: ''
+    })
     setSelectedLesson(null)
     setShowModal(true)
   }
 
-  // CRUD: READ (View)
   const handleView = (lesson) => {
     setModalMode('view')
     setSelectedLesson(lesson)
@@ -52,7 +76,6 @@ export default function ManageLessons() {
     setShowModal(true)
   }
 
-  // CRUD: UPDATE
   const handleEdit = (lesson) => {
     setModalMode('edit')
     setSelectedLesson(lesson)
@@ -60,7 +83,6 @@ export default function ManageLessons() {
     setShowModal(true)
   }
 
-  // CRUD: DELETE
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -86,44 +108,50 @@ export default function ManageLessons() {
     }
   }
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!formData.title || !formData.content || !formData.author) {
-      toast.error('Please fill in all required fields')
+
+    if (!formData.title.trim()) {
+      toast.error('Title is required')
+      return
+    }
+    if (!formData.description.trim()) {
+      toast.error('Description is required')
+      return
+    }
+    if (!formData.content.trim()) {
+      toast.error('Content is required')
       return
     }
 
     const loadingToast = toast.loading(modalMode === 'create' ? 'Creating lesson...' : 'Updating lesson...')
 
     try {
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        content: formData.content,
+        category: formData.category,
+        emotionalTone: formData.emotionalTone,
+        featuredImage: formData.featuredImage,
+        privacy: formData.privacy,
+        accessLevel: formData.accessLevel,
+        status: formData.status,
+        authorName: formData.authorName,
+        authorEmail: formData.authorEmail || '',
+        authorPhotoURL: formData.authorPhotoURL || ''
+      }
+
       if (modalMode === 'create') {
-        const response = await api.post('/lessons', {
-          title: formData.title,
-          content: formData.content,
-          author: formData.author,
-          status: formData.status
-        })
-        console.log('Create response:', response.data)
+        const response = await api.post('/lessons', payload)
         setLessons([response.data, ...lessons])
         setShowModal(false)
-        setFormData({ title: '', content: '', author: '', status: 'draft' })
         toast.success('Lesson created successfully', { id: loadingToast })
-  
       } else if (modalMode === 'edit') {
-        const response = await api.put(`/lessons/${selectedLesson._id}`, {
-          title: formData.title,
-          content: formData.content,
-          author: formData.author,
-          status: formData.status
-        })
-        console.log('Update response:', response.data)
+        const response = await api.put(`/lessons/${selectedLesson._id}`, payload)
         setLessons(lessons.map(l => l._id === selectedLesson._id ? response.data : l))
         setShowModal(false)
-        setFormData({ title: '', content: '', author: '', status: 'draft' })
         toast.success('Lesson updated successfully', { id: loadingToast })
-
       }
     } catch (err) {
       console.error('Error:', err.response?.data || err.message)
@@ -136,9 +164,42 @@ export default function ManageLessons() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  const filteredLessons = lessons.filter((lesson) => {
+    const privacyMatch =
+      filter === 'all'
+        ? true
+        : filter === 'public'
+          ? lesson.privacy === 'public'
+          : filter === 'private'
+            ? lesson.privacy === 'private'
+            : filter === 'free'
+              ? lesson.accessLevel === 'free'
+              : filter === 'premium'
+                ? lesson.accessLevel === 'premium'
+                : true
+
+    const statusMatch = statusFilter === 'all' ? true : lesson.status === statusFilter
+    return privacyMatch && statusMatch
+  })
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A'
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
+
+  const formatNumber = (num) => {
+    if (!num) return '0'
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
+    return num.toString()
+  }
+
   return (
-<>
-      <Toaster 
+    <>
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 3000,
@@ -170,7 +231,6 @@ export default function ManageLessons() {
         </button>
       </div>
 
-      {/* Error Alert */}
       {error && (
         <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center">
           <span>{error}</span>
@@ -178,7 +238,6 @@ export default function ManageLessons() {
         </div>
       )}
 
-      {/* Loading State */}
       {loading && (
         <div className="flex items-center justify-center py-12">
           <div className="loading loading-spinner loading-lg"></div>
@@ -187,48 +246,51 @@ export default function ManageLessons() {
 
       {!loading && (
         <>
-          {/* Filter Buttons */}
-          <div className="mb-6 flex gap-3 flex-wrap">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'all'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              All ({lessons.length})
-            </button>
-            <button
-              onClick={() => setFilter('published')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'published'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Published ({lessons.filter(l => l.status === 'published').length})
-            </button>
-            <button
-              onClick={() => setFilter('draft')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === 'draft'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Draft ({lessons.filter(l => l.status === 'draft').length})
-            </button>
+          <div className="mb-6 flex flex-wrap gap-3 items-center">
+            <span className="text-sm font-semibold">Privacy/Access:</span>
+            {['all', 'public', 'private', 'free', 'premium'].map((item) => (
+              <button
+                key={item}
+                onClick={() => setFilter(item)}
+                className={`px-4 py-2 rounded-lg font-medium transition ${
+                  filter === item
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {item === 'all' && `All (${lessons.length})`}
+                {item === 'public' && `Public (${lessons.filter(l => l.privacy === 'public').length})`}
+                {item === 'private' && `Private (${lessons.filter(l => l.privacy === 'private').length})`}
+                {item === 'free' && `Free (${lessons.filter(l => l.accessLevel === 'free').length})`}
+                {item === 'premium' && `Premium (${lessons.filter(l => l.accessLevel === 'premium').length})`}
+              </button>
+            ))}
+
+            <div className="flex items-center gap-2 ml-auto">
+              <span className="text-sm font-semibold">Status:</span>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="select select-bordered select-sm"
+              >
+                <option value="all">All</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
           </div>
 
-          {/* Lessons Table */}
           <div className="overflow-x-auto border rounded-lg">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 border-b">
                 <tr>
                   <th className="px-6 py-3 text-left font-semibold">Title</th>
                   <th className="px-6 py-3 text-left font-semibold">Author</th>
+                  <th className="px-6 py-3 text-left font-semibold">Category</th>
+                  <th className="px-6 py-3 text-left font-semibold">Privacy</th>
+                  <th className="px-6 py-3 text-left font-semibold">Access</th>
                   <th className="px-6 py-3 text-left font-semibold">Status</th>
+                  <th className="px-6 py-3 text-left font-semibold">Stats</th>
                   <th className="px-6 py-3 text-left font-semibold">Date</th>
                   <th className="px-6 py-3 text-left font-semibold">Actions</th>
                 </tr>
@@ -237,18 +299,51 @@ export default function ManageLessons() {
                 {filteredLessons.length > 0 ? (
                   filteredLessons.map(lesson => (
                     <tr key={lesson._id} className="hover:bg-gray-50 transition">
-                      <td className="px-6 py-4 font-medium truncate max-w-xs">{lesson.title}</td>
-                      <td className="px-6 py-4">{lesson.author}</td>
+                      <td className="px-6 py-4 font-medium truncate max-w-xs">
+                        <div className="truncate">{lesson.title}</div>
+                        <div className="text-xs text-gray-500 truncate">{lesson.description}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-semibold">{lesson.authorName || lesson.author}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="badge badge-sm">{lesson.category || 'N/A'}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          lesson.privacy === 'public'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {lesson.privacy === 'public' ? '🌍 Public' : '🔒 Private'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          lesson.accessLevel === 'premium'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {lesson.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}
+                        </span>
+                      </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           lesson.status === 'published'
                             ? 'bg-green-100 text-green-700'
                             : 'bg-yellow-100 text-yellow-700'
                         }`}>
-                          {lesson.status}
+                          {lesson.status || 'draft'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500">{lesson.createdAt?.split('T')[0] || 'N/A'}</td>
+                      <td className="px-6 py-4 text-xs">
+                        <div className="space-y-1">
+                          <div>❤️ {formatNumber(lesson.likesCount || 0)}</div>
+                          <div>🔖 {formatNumber(lesson.savedCount || 0)}</div>
+                          <div>👀 {formatNumber(lesson.viewCount || 0)}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-gray-500">{formatDate(lesson.createdAt)}</td>
                       <td className="px-6 py-4 flex gap-2">
                         <button
                           onClick={() => handleView(lesson)}
@@ -274,7 +369,7 @@ export default function ManageLessons() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan="9" className="px-6 py-8 text-center text-gray-500">
                       No lessons found
                     </td>
                   </tr>
@@ -285,11 +380,9 @@ export default function ManageLessons() {
         </>
       )}
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
               <h3 className="text-xl font-bold">
                 {modalMode === 'create' && 'Add Lesson'}
@@ -304,30 +397,53 @@ export default function ManageLessons() {
               </button>
             </div>
 
-            {/* Modal Content */}
             <div className="p-6">
               {modalMode === 'view' ? (
-                // View Mode
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
                     <p className="text-gray-900">{formData.title}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author</label>
-                    <p className="text-gray-900">{formData.author}</p>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                    <p className="text-gray-900">{formData.description}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author Email</label>
+                    <p className="text-gray-900">{formData.authorEmail || 'Not provided'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                     <p className="text-gray-900 capitalize">{formData.status}</p>
                   </div>
                   <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                    <p className="text-gray-900">{formData.category}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Emotional Tone</label>
+                    <p className="text-gray-900">{formData.emotionalTone}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Privacy</label>
+                    <p className="text-gray-900">{formData.privacy === 'public' ? '🌍 Public' : '🔒 Private'}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Access Level</label>
+                    <p className="text-gray-900">{formData.accessLevel === 'premium' ? '⭐ Premium' : '🆓 Free'}</p>
+                  </div>
+                  {formData.featuredImage && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">Featured Image</label>
+                      <img src={formData.featuredImage} alt="Featured" className="max-w-xs rounded-lg" />
+                    </div>
+                  )}
+                  <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Content</label>
                     <p className="text-gray-900 whitespace-pre-wrap">{formData.content}</p>
                   </div>
                 </div>
               ) : (
-                // Create/Edit Mode
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold mb-2">Title *</label>
@@ -343,29 +459,155 @@ export default function ManageLessons() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Author *</label>
-                    <input
-                      type="text"
-                      name="author"
-                      value={formData.author}
+                    <label className="block text-sm font-semibold mb-2">Description *</label>
+                    <textarea
+                      name="description"
+                      value={formData.description}
                       onChange={handleChange}
-                      placeholder="Enter author name"
+                      placeholder="Enter lesson description (2-3 sentences)"
+                      rows={3}
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Status</label>
-                    <select
-                      name="status"
-                      value={formData.status}
+                    <label className="block text-sm font-semibold mb-2">Author Email</label>
+                    <input
+                      type="email"
+                      name="authorEmail"
+                      value={formData.authorEmail}
                       onChange={handleChange}
+                      placeholder="author@example.com"
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    >
-                      <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                    </select>
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Author Name (display)</label>
+                      <input
+                        type="text"
+                        name="authorName"
+                        value={formData.authorName}
+                        onChange={handleChange}
+                        placeholder="Display name"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Author Photo URL</label>
+                      <input
+                        type="url"
+                        name="authorPhotoURL"
+                        value={formData.authorPhotoURL}
+                        onChange={handleChange}
+                        placeholder="https://example.com/photo.jpg"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-end">
+                    {formData.authorPhotoURL ? (
+                      <img src={formData.authorPhotoURL} alt={formData.authorName} className="w-16 h-16 rounded-lg object-cover" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center text-gray-600 font-semibold">
+                        {(formData.authorName || 'U').charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Category *</label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        required
+                      >
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Emotional Tone *</label>
+                      <select
+                        name="emotionalTone"
+                        value={formData.emotionalTone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        required
+                      >
+                        {tones.map(tone => (
+                          <option key={tone} value={tone}>{tone}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Featured Image URL (Optional)</label>
+                    <input
+                      type="url"
+                      name="featuredImage"
+                      value={formData.featuredImage}
+                      onChange={handleChange}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    {formData.featuredImage && (
+                      <img src={formData.featuredImage} alt="Preview" className="max-w-xs mt-2 rounded-lg" />
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Privacy *</label>
+                      <select
+                        name="privacy"
+                        value={formData.privacy}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        required
+                      >
+                        <option value="public">🌍 Public</option>
+                        <option value="private">🔒 Private</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Access Level *</label>
+                      <select
+                        name="accessLevel"
+                        value={formData.accessLevel}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        required
+                      >
+                        <option value="free">🆓 Free</option>
+                        <option value="premium">⭐ Premium</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Status</label>
+                      <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div>
@@ -374,7 +616,7 @@ export default function ManageLessons() {
                       name="content"
                       value={formData.content}
                       onChange={handleChange}
-                      placeholder="Enter lesson content"
+                      placeholder="Enter full lesson content / story"
                       rows={6}
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       required

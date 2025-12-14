@@ -27,17 +27,26 @@ export default function MyLessons() {
   const categories = ['Personal', 'Work', 'Relationships', 'Health', 'Finance', 'Education', 'Spirituality']
   const tones = ['Happy', 'Sad', 'Motivated', 'Reflective', 'Hopeful', 'Angry', 'Grateful']
 
-  // Fetch lessons on mount
+  // Fetch lessons on mount and when user changes
   useEffect(() => {
-    fetchMyLessons()
-  }, [])
+    if (user?._id) {
+      fetchMyLessons()
+    }
+  }, [user?._id])
 
   const fetchMyLessons = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await api.get('/dashboard/user/lessons')
-      setLessons(response.data || [])
+
+      if (!user?.email) {
+        setLessons([])
+        return
+      }
+
+      const response = await api.get(`/lessons/author-email/${encodeURIComponent(user.email)}`)
+      const lessonsData = Array.isArray(response.data?.lessons) ? response.data.lessons : (response.data || [])
+      setLessons(lessonsData)
     } catch (err) {
       const errorMsg = 'Failed to fetch lessons: ' + (err.response?.data?.error || err.message)
       setError(errorMsg)
@@ -154,6 +163,7 @@ export default function MyLessons() {
         accessLevel: formData.accessLevel,
         author: user._id,
         authorName: user.displayName || user.email,
+        authorEmail: user.email,
         authorPhotoURL: user.photoURL || ''
       }
 
@@ -416,6 +426,10 @@ export default function MyLessons() {
                     <p className="text-gray-900">{user?.displayName || user?.email || 'Anonymous'}</p>
                   </div>
                   <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Author Email</label>
+                    <p className="text-gray-900">{user?.email || 'Not provided'}</p>
+                  </div>
+                  <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Author Photo</label>
                     {user?.photoURL ? (
                       <img src={user.photoURL} alt={user.displayName} className="w-20 h-20 rounded-full object-cover" />
@@ -469,6 +483,17 @@ export default function MyLessons() {
                       type="text"
                       value={user?.displayName || user?.email || 'Anonymous'}
                       disabled
+                      className="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Author Email</label>
+                    <input
+                      type="email"
+                      value={user?.email || ''}
+                      disabled
+                      placeholder="No email available"
                       className="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
                   </div>
