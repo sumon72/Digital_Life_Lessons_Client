@@ -53,9 +53,9 @@ function HeroSlider() {
         }}
       />
       <div className="relative h-full flex items-center justify-center">
-        <div className="max-w-2xl mx-auto px-6 py-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">{slides[index].title}</h2>
-          <p className="mt-3 text-base md:text-lg text-white/95 max-w-xl mx-auto leading-relaxed">{slides[index].desc}</p>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow-lg">{slides[index].title}</h2>
+          <p className="mt-3 text-sm sm:text-base md:text-lg text-white/95 max-w-xl mx-auto leading-relaxed">{slides[index].desc}</p>
           <div className="mt-6">
             <Link to={slides[index].cta.to} className="btn bg-white text-primary font-semibold border-0 hover:bg-gray-100 shadow-md h-11 px-8">
               {slides[index].cta.label}
@@ -143,8 +143,8 @@ export default function Home() {
       <HeroSlider />
 
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-2xl font-bold">Featured Life Lessons</h3>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+          <h3 className="text-xl sm:text-2xl font-bold">Featured Life Lessons</h3>
           {user?.role === 'admin' && (
             <Link to="/dashboard/admin/lessons" className="text-sm text-primary underline">Manage lessons (admin)</Link>
           )}
@@ -178,8 +178,8 @@ export default function Home() {
       </section>
 
       <section>
-        <h3 className="text-2xl font-bold mb-4">Why Learning From Life Matters</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <h3 className="text-xl sm:text-2xl font-bold mb-4">Why Learning From Life Matters</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div className="p-6 bg-base-100 rounded-lg shadow">
             <h4 className="font-semibold">Real Experience</h4>
             <p className="mt-2 text-sm text-neutral-600">Lessons are rooted in real events — practical and actionable.</p>
@@ -201,9 +201,9 @@ export default function Home() {
 
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-2xl font-bold">Top Contributors This Week</h3>
+          <h3 className="text-xl sm:text-2xl font-bold">Top Contributors This Week</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {contributors.map(c => (
             <div key={c.id} className="p-4 bg-base-100 rounded-lg shadow flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">{c.name?.charAt(0)}</div>
@@ -218,9 +218,9 @@ export default function Home() {
 
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-2xl font-bold">Most Saved Lessons</h3>
+          <h3 className="text-xl sm:text-2xl font-bold">Most Saved Lessons</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {mostSaved.map(m => {
             const mid = m._id || m.id
             const saved = m.savedCount ?? m.saved

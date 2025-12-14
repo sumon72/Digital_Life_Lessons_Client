@@ -47,12 +47,12 @@ export default function UserDashboardHome() {
   }
 
   return (
-    <div className="min-h-screen bg-base-200 py-8 px-4 md:px-8">
+    <div className="min-h-screen bg-base-200 py-6 sm:py-8 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div className="card bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg">
             <div className="card-body">
               <div className="flex items-center justify-between">
@@ -91,9 +91,9 @@ export default function UserDashboardHome() {
         </div>
 
         {/* Recent Lessons */}
-        <div className="card bg-base-100 shadow-lg mb-8">
+        <div className="card bg-base-100 shadow-lg mb-6 sm:mb-8">
           <div className="card-body">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
               <h2 className="card-title">Recently Added Lessons</h2>
               <Link to="/dashboard/my-lessons" className="btn btn-sm btn-ghost">View All →</Link>
             </div>

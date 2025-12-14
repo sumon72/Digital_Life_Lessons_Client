@@ -23,6 +23,7 @@ export default function Profile() {
   })
   const [publicLessons, setPublicLessons] = useState([])
   const [loadingStats, setLoadingStats] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -185,6 +186,10 @@ export default function Profile() {
 
             {/* Profile Picture Section */}
             <div className="flex flex-col items-center -mt-16 mb-8 relative z-10">
+              {/* Mobile menu slider trigger */}
+              <div className="absolute top-0 left-0 md:hidden">
+                <button className="btn btn-ghost" onClick={() => setMobileMenuOpen(true)} aria-label="Open profile menu">☰</button>
+              </div>
               <div className="avatar mb-6">
                 <div className="w-40 rounded-full border-4 border-base-100 bg-gradient-to-br from-primary to-secondary text-primary-content flex items-center justify-center text-5xl overflow-hidden shadow-lg">
                   {photoURL ? (
@@ -371,6 +376,24 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Mobile profile menu slider */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute right-0 top-0 h-full w-80 bg-base-100 shadow-xl p-4 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-bold text-lg">Profile Menu</span>
+              <button className="btn btn-ghost" onClick={() => setMobileMenuOpen(false)}>✕</button>
+            </div>
+            <ul className="menu">
+              <li><a href="#profile-form" onClick={() => setMobileMenuOpen(false)}>Edit Profile</a></li>
+              <li><a href="#public-lessons" onClick={() => setMobileMenuOpen(false)}>My Public Lessons</a></li>
+              <li><a onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }}>Dashboard</a></li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

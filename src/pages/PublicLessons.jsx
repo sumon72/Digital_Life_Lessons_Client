@@ -169,11 +169,11 @@ export default function PublicLessons() {
     <div className="min-h-screen bg-base-200 py-12 px-4 md:px-8 lg:px-16">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-base-content mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-base-content mb-4">
             📚 Public Life Lessons
           </h1>
-          <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-base-content/70 max-w-2xl mx-auto">
             Discover wisdom shared by our community. Browse and learn from publicly shared life experiences.
           </p>
         </div>
@@ -200,7 +200,7 @@ export default function PublicLessons() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="select select-bordered w-full max-w-xs"
+                className="select select-bordered w-full sm:max-w-xs"
               >
                 <option value="newest">📅 Newest First</option>
                 <option value="mostSaved">🔖 Most Saved</option>

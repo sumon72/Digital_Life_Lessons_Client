@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext'
 export default function UserLayout({ children }) {
   const [theme, setTheme] = useState('light')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [mobileDrawer, setMobileDrawer] = useState(false)
   const location = useLocation()
   const { user } = useUser()
 
@@ -45,8 +46,8 @@ export default function UserLayout({ children }) {
 
   return (
     <div className={`flex h-screen ${isDark ? 'bg-slate-950' : 'bg-gray-50'}`}>
-      {/* Sidebar */}
-      <aside className={`${sidebarBg} ${sidebarBorder} border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} shadow-md`}>
+      {/* Sidebar (desktop) */}
+      <aside className={`${sidebarBg} ${sidebarBorder} border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} shadow-md hidden md:block`}>
         <div className={`flex items-center justify-between h-16 px-4 ${isDark ? 'border-slate-700' : 'border-gray-200'} border-b`}>
           <Link to="/" className={`font-semibold ${sidebarText}`}>
             {sidebarOpen ? '📚 User Dashboard' : '📚'}
@@ -78,6 +79,41 @@ export default function UserLayout({ children }) {
           ))}
         </nav>
       </aside>
+
+      {/* Mobile drawer trigger */}
+      <div className="md:hidden fixed top-2 left-2 z-50">
+        <button className="btn btn-ghost" onClick={() => setMobileDrawer(true)} aria-label="Open user menu">☰</button>
+      </div>
+
+      {/* Mobile drawer */}
+      {mobileDrawer && (
+        <div className="md:hidden fixed inset-0 z-40">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileDrawer(false)} />
+          <div className={`${sidebarBg} ${sidebarBorder} absolute left-0 top-0 h-full w-72 shadow-xl`}>
+            <div className={`flex items-center justify-between h-16 px-4 ${isDark ? 'border-slate-700' : 'border-gray-200'} border-b`}>
+              <span className={`font-semibold ${sidebarText}`}>📚 Dashboard</span>
+              <button className="btn btn-ghost" onClick={() => setMobileDrawer(false)}>✕</button>
+            </div>
+            <nav className="mt-4 space-y-2 px-3">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition ${
+                    isActive(item.path)
+                      ? activeBg
+                      : `${sidebarText} ${inactiveBg}`
+                  }`}
+                  onClick={() => setMobileDrawer(false)}
+                >
+                  <span className="text-xl">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">

@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext'
 
 export default function Navbar() {
   const [theme, setTheme] = useState('light')
+  const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
   const { user, logout, isAuthenticated, loading, userPlan } = useUser()
 
@@ -68,8 +69,8 @@ export default function Navbar() {
         📚 Digital Life Lessons
       </Link>
 
-      {/* Center: Menu */}
-      <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2">
+      {/* Center: Menu (hidden on small screens) */}
+      <ul className="menu menu-horizontal px-1 gap-2 absolute left-1/2 transform -translate-x-1/2 hidden md:flex">
         {navLinks.map(link => (
           <li key={link.to}>
             <Link to={link.to} className={baseLinkClass}>{link.label}</Link>
@@ -77,13 +78,14 @@ export default function Navbar() {
         ))}
       </ul>
 
-      {/* Right: Auth & Theme Toggle */}
+      {/* Right: Auth & Theme Toggle + Mobile menu toggle */}
       <div className="flex gap-3 items-center">
         {loading ? (
           <span className={`loading loading-spinner loading-sm ${textColor}`}></span>
         ) : isAuthenticated ? (
           <>
-            <div className="dropdown dropdown-end">
+            {/* Avatar dropdown - hidden on mobile */}
+            <div className="dropdown dropdown-end hidden md:block">
               <div tabIndex={0} className={`btn btn-ghost btn-circle avatar w-12 h-12 border-2 ${avatarBorder}`}>
                 <div className={`w-10 rounded-full ${avatarInner} flex items-center justify-center overflow-hidden`}>
                   {user?.photoURL ? (
@@ -136,7 +138,63 @@ export default function Navbar() {
             aria-hidden="true"
           ></span>
         </button>
+
+        {/* Mobile hamburger (shows right-side collapsed menu) */}
+        <button
+          className={`btn btn-ghost md:hidden ${textColor}`}
+          aria-label="Open menu"
+          onClick={() => setMobileOpen(true)}
+        >
+          ☰
+        </button>
       </div>
+
+      {/* Mobile right-side collapsed panel */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          <div
+            className="absolute inset-0 bg-black/40"
+            aria-hidden="true"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className={`${dropdownBg} absolute right-0 top-0 h-full w-72 p-4 flex flex-col shadow-xl`}>
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-bold text-lg">Menu</span>
+              <button className="btn btn-ghost" onClick={() => setMobileOpen(false)}>✕</button>
+            </div>
+            <ul className="menu gap-1">
+              {navLinks.map(link => (
+                <li key={link.to}>
+                  <Link to={link.to} className={baseLinkClass} onClick={() => setMobileOpen(false)}>{link.label}</Link>
+                </li>
+              ))}
+              
+              {/* Profile & Logout for authenticated users on mobile */}
+              {isAuthenticated && (
+                <>
+                  <div className="divider my-2"></div>
+                  <li>
+                    <Link to="/profile" className={baseLinkClass} onClick={() => setMobileOpen(false)}>
+                      👤 Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <button 
+                      className={baseLinkClass} 
+                      onClick={() => { 
+                        setMobileOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      🚪 Logout
+                    </button>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
