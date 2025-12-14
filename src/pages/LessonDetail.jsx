@@ -5,6 +5,7 @@ import api from '../config/api'
 import toast from 'react-hot-toast'
 import Swal from 'sweetalert2'
 import { ShareButtons } from '../components/ShareButtons'
+import { getSwalThemeConfig } from '../utils/sweetAlertTheme'
 
 export default function LessonDetail() {
   const { id } = useParams()
@@ -174,7 +175,8 @@ export default function LessonDetail() {
       confirmButtonColor: '#EF4444',
       cancelButtonColor: '#6B7280',
       confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
+      ...getSwalThemeConfig()
     })
 
     if (result.isConfirmed) {
@@ -247,7 +249,8 @@ export default function LessonDetail() {
         if (!value) {
           return 'Please select a reason'
         }
-      }
+      },
+      ...getSwalThemeConfig()
     })
 
     if (reason) {

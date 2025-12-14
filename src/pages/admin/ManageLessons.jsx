@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../../config/api'
 import toast, { Toaster } from 'react-hot-toast'
 import Swal from 'sweetalert2'
+import { getSwalThemeConfig } from '../../utils/sweetAlertTheme'
 
 export default function ManageLessons() {
   const [lessons, setLessons] = useState([])
@@ -92,7 +93,8 @@ export default function ManageLessons() {
       confirmButtonColor: '#EF4444',
       cancelButtonColor: '#6B7280',
       confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
+      ...getSwalThemeConfig()
     })
 
     if (result.isConfirmed) {

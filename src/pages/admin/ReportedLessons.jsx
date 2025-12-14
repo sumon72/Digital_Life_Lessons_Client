@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../../config/api'
 import toast from 'react-hot-toast'
 import Swal from 'sweetalert2'
+import { getSwalThemeConfig } from '../../utils/sweetAlertTheme'
 
 export default function ReportedLessons() {
   const navigate = useNavigate()
@@ -52,7 +53,8 @@ export default function ReportedLessons() {
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Yes, delete it',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
+      ...getSwalThemeConfig()
     })
 
     if (result.isConfirmed) {
@@ -77,7 +79,8 @@ export default function ReportedLessons() {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Yes, ignore reports',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
+      ...getSwalThemeConfig()
     })
 
     if (result.isConfirmed) {
