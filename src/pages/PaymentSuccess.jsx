@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import api from '../config/api'
@@ -10,6 +10,8 @@ export default function PaymentSuccess() {
   const { user, refreshUser } = useUser()
   const [loading, setLoading] = useState(true)
   const [success, setSuccess] = useState(false)
+  const [statusMessage, setStatusMessage] = useState('Verifying your payment...')
+  const pollAttempts = useRef(0)
   const sessionId = searchParams.get('session_id')
 
   useEffect(() => {
@@ -39,6 +41,15 @@ export default function PaymentSuccess() {
           }
           toast.success('🎉 Welcome to Premium!')
         }, 500)
+      } else if (response.data?.pending) {
+        // Stripe can be in processing; poll a few times before failing
+        pollAttempts.current += 1
+        setStatusMessage('Payment is processing, re-checking...')
+        if (pollAttempts.current <= 5) {
+          setTimeout(() => verifyPayment(), 2500)
+          return
+        }
+        throw new Error('Payment still processing, please try again')
       } else {
         throw new Error('Payment verification failed')
       }
@@ -58,7 +69,7 @@ export default function PaymentSuccess() {
       <div className="min-h-screen bg-base-200 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="loading loading-spinner loading-lg text-primary"></div>
-          <p className="text-base-content/70">Verifying your payment...</p>
+          <p className="text-base-content/70">{statusMessage}</p>
         </div>
       </div>
     )
