@@ -360,7 +360,7 @@ export default function ManageLessons() {
                         <div className="text-sm font-semibold">{lesson.authorName || lesson.author}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="badge badge-sm">{lesson.category || 'N/A'}</span>
+                        <span>{lesson.category || 'N/A'}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${

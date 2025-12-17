@@ -14,10 +14,12 @@ export default function Login() {
   const navigate = useNavigate()
   const { user } = useUser()
 
-  // Redirect if already logged in
-  if (user) {
-    navigate('/dashboard')
-  }
+  // Redirect if already logged in (do this in an effect to avoid setState during render warnings)
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard')
+    }
+  }, [user, navigate])
 
   const handleLogin = async (e) => {
     e.preventDefault()
