@@ -91,21 +91,21 @@ export default function Pricing() {
 
   const isDark = theme === 'dark'
   const pageBg = isDark
-    ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100'
-    : 'bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900'
+    ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100'
+    : 'bg-gradient-to-br from-white via-slate-50 to-slate-100 text-slate-900'
   const badgeSoft = isDark
-    ? 'bg-white/5 border border-white/10 text-primary-200'
-    : 'bg-primary/10 border border-primary/20 text-primary-700'
+    ? 'bg-primary/20 border border-primary/40 text-primary-100'
+    : 'bg-primary/10 border border-primary/30 text-primary-700'
   const surfaceSubtle = isDark
-    ? 'rounded-2xl border border-white/10 bg-white/5 backdrop-blur text-slate-100'
-    : 'rounded-2xl border border-slate-200 bg-white shadow text-slate-900'
+    ? 'rounded-3xl border border-white/10 bg-white/5 backdrop-blur text-slate-100 shadow-xl'
+    : 'rounded-3xl border border-slate-200 bg-white/80 backdrop-blur shadow-xl text-slate-900'
   const surfaceTable = isDark
-    ? 'rounded-2xl border border-white/10 bg-white/5 backdrop-blur text-slate-100'
-    : 'rounded-2xl border border-slate-200 bg-white shadow text-slate-900'
-  const tableHeadBg = isDark ? 'bg-white/5' : 'bg-slate-100'
-  const mutedText = isDark ? 'text-slate-200/75' : 'text-slate-600'
-  const softerText = isDark ? 'text-slate-200/80' : 'text-slate-700'
-  const accentPill = isDark ? 'bg-white/10 border border-white/10' : 'bg-primary/10 border border-primary/20 text-primary-700'
+    ? 'rounded-3xl border border-white/10 bg-white/5 backdrop-blur text-slate-100 shadow-xl'
+    : 'rounded-3xl border border-slate-200 bg-white/80 backdrop-blur shadow-xl text-slate-900'
+  const tableHeadBg = isDark ? 'bg-white/10' : 'bg-slate-100'
+  const mutedText = isDark ? 'text-slate-300/80' : 'text-slate-600'
+  const softerText = isDark ? 'text-slate-200/90' : 'text-slate-700'
+  const accentPill = isDark ? 'bg-white/10 border border-white/20 text-white' : 'bg-primary/10 border border-primary/30 text-primary-700'
 
   if (planLoading) {
     return (
@@ -159,112 +159,148 @@ export default function Pricing() {
   }
 
   return (
-    <main className={`min-h-screen ${pageBg} py-14 px-4 md:px-10 lg:px-16`}>
-      <div className="max-w-6xl mx-auto">
+    <main className={`min-h-screen ${pageBg} py-16 px-4 md:px-8 lg:px-16 flex items-center`}>
+      <div className="max-w-7xl mx-auto w-full">
         {/* Hero */}
-        <div className="text-center mb-12">
-          <p className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs uppercase tracking-[0.18em] ${badgeSoft}`}>Premium • Lifetime</p>
-          <h1 className="text-4xl md:text-5xl font-bold mt-4 mb-3">Own your lessons forever</h1>
-          <p className={`text-lg ${mutedText} max-w-2xl mx-auto`}>
-            Upgrade once, create without limits. Premium unlocks unlimited lessons, ad-free reading, priority placement, and analytics.
+        <div className="text-center mb-16">
+          <p className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs uppercase tracking-wider font-semibold ${badgeSoft} mb-4`}>🎁 Premium Membership</p>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">Own Your Legacy<br/>Forever</h1>
+          <p className={`text-lg ${softerText} max-w-3xl mx-auto leading-relaxed`}>
+            Upgrade once, create unlimited. Unlock premium features and join an elite community of knowledge-sharers.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1.1fr] gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
           {/* Free Plan */}
-          <div className={`relative overflow-hidden ${surfaceSubtle} shadow-xl`}>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-40 pointer-events-none"></div>
-            <div className="p-8 flex flex-col h-full relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className={`text-sm uppercase tracking-[0.14em] ${mutedText}`}>Starter</p>
-                  <h2 className="text-2xl font-semibold">Free Plan</h2>
+          <div className={`group ${surfaceSubtle} overflow-hidden transition-all duration-500 hover:shadow-2xl`}>
+            <div className="p-10 flex flex-col h-full">
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className={`text-xs uppercase tracking-wider font-bold ${mutedText}`}>Get Started</p>
+                    <h2 className="text-3xl font-bold mt-2">Free Plan</h2>
+                  </div>
+                  <span className={`px-4 py-2 text-xs rounded-full font-semibold ${accentPill}`}>✓ Current</span>
                 </div>
-                <span className={`px-3 py-1 text-xs rounded-full ${accentPill}`}>Current</span>
+                <p className={`${mutedText} text-sm leading-relaxed`}>Perfect for exploring and sharing your first stories.</p>
               </div>
-              <p className={`${mutedText} mb-6`}>Perfect to explore and publish your first lessons.</p>
-              <div className="mb-6">
-                <div className="text-4xl font-bold">৳0</div>
-                <p className={`text-sm ${mutedText}`}>Forever free</p>
+
+              <div className="mb-10">
+                <div className="text-5xl font-bold mb-1">Free</div>
+                <p className={`text-sm ${mutedText}`}>Forever free, always available</p>
               </div>
-              <div className="space-y-3 text-sm flex-1">
-                <div className="flex items-center gap-2"><span className="text-lg">✓</span><span>Up to 3 lessons per month</span></div>
-                <div className="flex items-center gap-2"><span className="text-lg">✓</span><span>Basic lesson creation</span></div>
-                <div className="flex items-center gap-2"><span className="text-lg">✓</span><span>Community access</span></div>
+
+              <div className="space-y-4 flex-1 mb-10">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">✓</span><span className="font-medium">Up to 3 lessons per month</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">✓</span><span className="font-medium">Basic lesson creation</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">✓</span><span className="font-medium">Community access</span>
+                </div>
+                <div className="flex items-center gap-3 opacity-50">
+                  <span className="text-2xl">✗</span><span className="font-medium">Ad-free experience</span>
+                </div>
+                <div className="flex items-center gap-3 opacity-50">
+                  <span className="text-2xl">✗</span><span className="font-medium">Priority placement</span>
+                </div>
               </div>
-              <button className="btn btn-outline btn-block mt-8" disabled>Current Plan</button>
+
+              <button className="btn btn-outline w-full font-bold" disabled>
+                Current Plan
+              </button>
             </div>
           </div>
 
-          {/* Premium Plan */}
-          <div className="relative overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/90 via-primary to-amber-400/90 text-primary-content shadow-2xl">
-            <div className="absolute inset-0 opacity-25 pointer-events-none" style={{background: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35), transparent 32%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.28), transparent 30%)'}}></div>
-            <div className="p-8 relative z-10 flex flex-col h-full">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.14em]">Lifetime</p>
-                  <h2 className="text-3xl font-bold">Premium Plan</h2>
+          {/* Premium Plan - FEATURED */}
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-secondary to-primary rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition duration-500 -z-10"></div>
+            <div className="relative rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/95 via-primary/90 to-secondary/90 text-white shadow-2xl overflow-hidden">
+              <div className="absolute inset-0 opacity-30" style={{background: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3), transparent 32%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.25), transparent 30%)'}}></div>
+              
+              <div className="p-10 relative z-10 flex flex-col h-full">
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-wider font-bold text-white/80">Lifetime Access</p>
+                      <h2 className="text-3xl font-bold mt-2">Premium Plan</h2>
+                    </div>
+                    <span className="px-4 py-2 text-xs rounded-full font-semibold bg-white/20 border border-white/40 backdrop-blur">⭐ Recommended</span>
+                  </div>
+                  <p className="text-white/90 text-sm leading-relaxed">Create unlimited lessons and unlock your full potential.</p>
                 </div>
-                <span className="px-3 py-1 text-xs rounded-full bg-white/20 border border-white/30">Recommended</span>
-              </div>
-              <p className="opacity-90 mb-6">Everything you need to publish, grow, and monetize your lessons with confidence.</p>
-              <div className="mb-6">
-                <div className="text-5xl font-extrabold">৳1,500</div>
-                <p className="text-sm opacity-80">One-time • Lifetime access</p>
-              </div>
-              <button
-                onClick={handleUpgradeClick}
-                disabled={loading}
-                className="btn bg-white text-primary font-bold border-0 shadow-lg hover:bg-amber-50 mb-6"
-              >
-                {loading ? (
-                  <>
-                    <span className="loading loading-spinner loading-sm"></span>
-                    Processing...
-                  </>
-                ) : (
-                  'Upgrade to Premium'
-                )}
-              </button>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2"><span className="text-lg">✨</span><span>Unlimited lessons</span></div>
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2"><span className="text-lg">✨</span><span>Premium lesson creation</span></div>
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2"><span className="text-lg">✨</span><span>Ad-free experience</span></div>
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2"><span className="text-lg">✨</span><span>Priority listing</span></div>
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2"><span className="text-lg">✨</span><span>Advanced analytics</span></div>
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2"><span className="text-lg">✨</span><span>Priority support</span></div>
+                <div className="mb-10">
+                  <div className="text-6xl font-extrabold mb-2">৳1,500</div>
+                  <p className="text-sm text-white/80">One-time payment • Lifetime ownership</p>
+                </div>
+
+                <button
+                  onClick={handleUpgradeClick}
+                  disabled={loading}
+                  className="btn bg-white text-primary font-bold border-0 w-full mb-8 shadow-lg hover:shadow-xl hover:scale-105 transition h-12 text-base"
+                >
+                  {loading ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    '🚀 Upgrade to Premium'
+                  )}
+                </button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                  <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 font-medium text-sm">
+                    <span>✨</span><span>Unlimited lessons</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 font-medium text-sm">
+                    <span>🎨</span><span>Premium tools</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 font-medium text-sm">
+                    <span>📈</span><span>Advanced analytics</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 font-medium text-sm">
+                    <span>🎯</span><span>Priority support</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 font-medium text-sm">
+                    <span>👑</span><span>Premium badge</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 font-medium text-sm">
+                    <span>🔒</span><span>Ad-free always</span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-white/70">✓ Secure Stripe payment • ✓ No subscriptions • ✓ Money-back guarantee</p>
               </div>
-              <p className="text-xs opacity-80 mt-4">Pay once. No subscriptions. Lifetime ownership.</p>
             </div>
           </div>
         </div>
 
         {/* Comparison Table */}
-        <div className={`${surfaceTable} overflow-hidden`}>
-          <div className={`p-6 border-b ${isDark ? 'border-white/10' : 'border-slate-200'} flex items-center justify-between`}>
-            <div>
-              <h2 className="text-2xl font-bold">Feature comparison</h2>
-              <p className={`${mutedText} text-sm`}>Know exactly what you get with Premium.</p>
-            </div>
-            <span className={`hidden md:inline-flex px-3 py-1 rounded-full text-xs tracking-[0.16em] ${accentPill}`}>Free vs Premium</span>
+        <div className={`${surfaceTable} overflow-hidden transition-all duration-500 hover:shadow-2xl`}>
+          <div className={`p-8 border-b ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+            <h2 className="text-3xl font-bold mb-2">Complete Feature Comparison</h2>
+            <p className={`${mutedText} text-sm`}>See exactly what you'll unlock with Premium membership.</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className={tableHeadBg}>
                 <tr>
-                  <th className="text-left p-4 font-bold">Feature</th>
-                  <th className="text-center p-4 font-bold">Free</th>
-                  <th className="text-center p-4 font-bold">Premium</th>
+                  <th className="text-left p-6 font-bold">Feature</th>
+                  <th className="text-center p-6 font-bold">Free Plan</th>
+                  <th className="text-center p-6 font-bold bg-primary/10">Premium Plan</th>
                 </tr>
               </thead>
-              <tbody className={`${isDark ? 'divide-white/10' : 'divide-slate-200'}`}>
+              <tbody className={`${isDark ? 'divide-white/5' : 'divide-slate-200'} divide-y`}>
                 {FEATURES.map((feature, idx) => (
                   <tr key={idx} className={`${isDark ? 'hover:bg-white/5' : 'hover:bg-slate-50'} transition`}>
-                    <td className="p-4 font-medium">{feature.name}</td>
-                    <td className={`p-4 text-center ${mutedText}`}>{feature.free}</td>
-                    <td className="p-4 text-center font-semibold text-emerald-400">{feature.premium}</td>
+                    <td className="p-6 font-semibold">{feature.name}</td>
+                    <td className={`p-6 text-center ${feature.free === '❌' ? 'opacity-40' : 'font-semibold'}`}>{feature.free}</td>
+                    <td className="p-6 text-center font-bold text-secondary bg-primary/5">{feature.premium}</td>
                   </tr>
                 ))}
               </tbody>
@@ -273,20 +309,21 @@ export default function Pricing() {
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold mb-8">Questions, answered.</h2>
+        <div className="mt-20 text-center">
+          <h2 className="text-3xl font-bold mb-4">Got Questions?</h2>
+          <p className={`${softerText} mb-12 max-w-2xl mx-auto`}>Everything you need to know about Premium membership</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className={`${surfaceSubtle} p-6 text-left`}>
-              <h3 className="text-lg font-semibold mb-2">Is it really lifetime?</h3>
-              <p className={`text-sm ${mutedText}`}>Yes. One payment unlocks Premium forever. No renewals, no hidden fees.</p>
+            <div className={`${surfaceSubtle} p-8 text-left hover:shadow-lg transition-all duration-300`}>
+              <h3 className="text-lg font-bold mb-3">💎 Truly Lifetime?</h3>
+              <p className={`text-sm ${mutedText}`}>Yes. Pay once, create forever. No hidden charges, no recurring fees. Your Premium membership is permanent.</p>
             </div>
-            <div className={`${surfaceSubtle} p-6 text-left`}>
-              <h3 className="text-lg font-semibold mb-2">Is checkout secure?</h3>
-              <p className={`text-sm ${mutedText}`}>Stripe handles payments end-to-end. We never store your card details.</p>
+            <div className={`${surfaceSubtle} p-8 text-left hover:shadow-lg transition-all duration-300`}>
+              <h3 className="text-lg font-bold mb-3">🔒 Is it Safe?</h3>
+              <p className={`text-sm ${mutedText}`}>Stripe handles all payments with bank-level encryption. Your card details never touch our servers.</p>
             </div>
-            <div className={`${surfaceSubtle} p-6 text-left`}>
-              <h3 className="text-lg font-semibold mb-2">Need help?</h3>
-              <p className={`text-sm ${mutedText}`}>Email support@digitallifelessons.com — we respond with priority for Premium members.</p>
+            <div className={`${surfaceSubtle} p-8 text-left hover:shadow-lg transition-all duration-300`}>
+              <h3 className="text-lg font-bold mb-3">💬 Need Support?</h3>
+              <p className={`text-sm ${mutedText}`}>Email support@digitallifelessons.com. Premium members get priority responses within 24 hours.</p>
             </div>
           </div>
         </div>
@@ -294,3 +331,5 @@ export default function Pricing() {
     </main>
   )
 }
+
+

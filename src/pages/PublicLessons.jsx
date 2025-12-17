@@ -187,85 +187,98 @@ export default function PublicLessons() {
         </div>
 
         {/* Filters */}
-        <div className="card bg-base-100 shadow-lg mb-8">
+        <div className="card bg-base-100 border border-base-300 shadow-xl mb-8">
           <div className="card-body">
-            {/* Search */}
-            <div className="form-control mb-4">
-              <input
-                type="text"
-                placeholder="🔍 Search lessons by title or description..."
-                className="input input-bordered w-full"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {/* Sort */}
-            <div className="mb-4">
-              <label className="label">
-                <span className="label-text font-semibold">Sort By</span>
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="select select-bordered w-full sm:max-w-xs"
-              >
-                <option value="newest">📅 Newest First</option>
-                <option value="mostSaved">🔖 Most Saved</option>
-              </select>
-            </div>
-
-            {/* Category Filter */}
-            <div className="mb-4">
-              <label className="label">
-                <span className="label-text font-semibold">Category</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {categories.map(category => (
-                  <button
-                    key={category}
-                    onClick={() => setCategoryFilter(category)}
-                    className={`btn btn-sm ${
-                      categoryFilter === category
-                        ? 'btn-primary'
-                        : 'btn-outline'
-                    }`}
-                  >
-                    {category === 'all' ? 'All Categories' : category}
-                  </button>
-                ))}
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-base-content/70">Filter public lessons</p>
+                  <p className="text-xs text-base-content/50">Mix category, tone, and search to find the right story.</p>
+                </div>
               </div>
-            </div>
 
-            {/* Tone Filter */}
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Emotional Tone</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {tones.map(tone => (
-                  <button
-                    key={tone}
-                    onClick={() => setToneFilter(tone)}
-                    className={`btn btn-sm ${
-                      toneFilter === tone
-                        ? 'btn-primary'
-                        : 'btn-outline'
-                    }`}
-                  >
-                    {tone === 'all' ? 'All Tones' : tone}
-                  </button>
-                ))}
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Category Filter */}
+                <div>
+                  <label className="label pb-1">
+                    <span className="label-text font-semibold">Category</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map(category => (
+                      <button
+                        key={category}
+                        onClick={() => setCategoryFilter(category)}
+                        className={`btn btn-sm rounded-full ${
+                          categoryFilter === category
+                            ? 'btn-primary'
+                            : 'btn-outline'
+                        }`}
+                      >
+                        {category === 'all' ? 'All Categories' : category}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tone Filter */}
+                <div>
+                  <label className="label pb-1">
+                    <span className="label-text font-semibold">Emotional Tone</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {tones.map(tone => (
+                      <button
+                        key={tone}
+                        onClick={() => setToneFilter(tone)}
+                        className={`btn btn-sm rounded-full ${
+                          toneFilter === tone
+                            ? 'btn-primary'
+                            : 'btn-outline'
+                        }`}
+                      >
+                        {tone === 'all' ? 'All Tones' : tone}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Search */}
+              <div className="form-control">
+                <label className="label pb-1">
+                  <span className="label-text font-semibold">Search</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40">🔍</span>
+                  <input
+                    type="text"
+                    placeholder="Search lessons by title or description..."
+                    className="input input-bordered w-full pl-10"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Results Count */}
-        <div className="mb-6">
+        {/* Results Count and Sort */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <p className="text-base-content/70">
             Showing <span className="font-bold text-primary">{filteredLessons.length}</span> lesson{filteredLessons.length !== 1 ? 's' : ''}
           </p>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-semibold text-base-content/70">Sort By</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="select select-bordered select-sm sm:select-md w-full sm:w-auto"
+            >
+              <option value="newest">📅 Newest First</option>
+              <option value="mostSaved">🔖 Most Saved</option>
+            </select>
+          </div>
         </div>
 
         {/* Lessons Grid */}

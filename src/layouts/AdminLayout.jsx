@@ -85,8 +85,8 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Mobile drawer trigger */}
-      <div className="md:hidden fixed top-2 left-2 z-50">
-        <button className="btn btn-ghost" onClick={() => setMobileDrawer(true)} aria-label="Open admin menu">☰</button>
+      <div className="md:hidden fixed">
+        <button className="btn btn-ghost" onClick={() => setMobileDrawer(true)} aria-label="Open admin menu">➡️</button>
       </div>
 
       {/* Mobile drawer */}

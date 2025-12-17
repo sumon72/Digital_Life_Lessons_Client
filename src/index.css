@@ -41,6 +41,63 @@
   .text-premium {
     @apply text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-yellow-500 font-bold;
   }
+
+  /* Modern Glass-morphism Card */
+  .glass-card {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 hover:bg-white/10 hover:border-white/20;
+  }
+
+  .glass-card-light {
+    @apply rounded-2xl border border-slate-200 bg-white/50 backdrop-blur-md shadow-lg transition-all duration-300 hover:shadow-xl hover:border-slate-300;
+  }
+
+  /* Modern Gradient Button */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary via-purple-500 to-secondary border-0 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105;
+  }
+
+  /* Modern Section Container */
+  .modern-section {
+    @apply rounded-3xl p-6 md:p-10 lg:p-12 backdrop-blur-sm;
+  }
+
+  /* Modern Feature Card */
+  .feature-card {
+    @apply group rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer;
+  }
+
+  /* Floating Animation */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Gradient Text Animation */
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .text-gradient {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+    @apply bg-clip-text text-transparent;
+  }
+
+  /* Modern Input Styling */
+  .input-modern {
+    @apply rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 transition-all duration-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+
+  /* Smooth Shadow Transition */
+  .shadow-modern {
+    @apply shadow-lg dark:shadow-2xl transition-shadow duration-300;
+  }
 }
 
 * {
@@ -49,10 +106,20 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.5px;
+}
+
+/* Smooth transitions globally */
+* {
+  @apply transition-colors duration-200;
 }

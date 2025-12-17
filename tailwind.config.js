@@ -6,6 +6,7 @@ export default {
     "node_modules/daisyui/dist/**/*.js",
     "node_modules/react-daisyui/dist/**/*.js",
   ],
+  darkMode: "class", // enable class-based dark mode so dark: utilities respond to html.dark
   theme: {
     extend: {},
   },
