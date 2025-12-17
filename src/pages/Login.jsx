@@ -6,8 +6,8 @@ import { useUser } from '../context/UserContext'
 import GoogleLoginButton from '../components/GoogleLoginButton'
 
 export default function Login() {
-  const [email, setEmail] = useState('Admin@gmail.com')
-  const [password, setPassword] = useState('Admin@123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -44,6 +44,10 @@ export default function Login() {
           <div className="bg-gradient-to-r from-primary to-primary/80 px-8 py-8 sm:px-10">
             <h1 className="text-3xl font-bold text-primary-content text-center">Welcome Back</h1>
             <p className="text-primary-content/80 text-center mt-2">Sign in to your account to continue</p>
+             <p className="text-primary-content/80 text-center">Admin User: Admin@gmail.com
+              <br />
+              Password: Admin@123
+            </p>
           </div>
 
           {/* Body */}
