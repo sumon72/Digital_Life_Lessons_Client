@@ -221,9 +221,13 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {contributors.length > 0 ? contributors.map((c, i) => (
-              <div key={c.id} className="group glass-card-light dark:glass-card p-6 flex items-center gap-4 hover:scale-105 transition-all duration-300">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white flex-shrink-0 group-hover:shadow-lg">
-                  {c.name?.charAt(0).toUpperCase()}
+              <div key={c.userId || `contributor-${i}`} className="group glass-card-light dark:glass-card p-6 flex items-center gap-4 hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white flex-shrink-0 group-hover:shadow-lg overflow-hidden">
+                  {c.photoURL ? (
+                    <img src={c.photoURL} alt={c.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{c.name?.charAt(0).toUpperCase()}</span>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-lg">{c.name}</h4>
