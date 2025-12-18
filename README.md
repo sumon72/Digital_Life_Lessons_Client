@@ -1,0 +1,8 @@
+https://docs.stripe.com/testing#cards
+
+4000056655665556
+4242424242424242
+5555555555554444
+
+Admin User: Admin@gmail.com
+Password: Admin@123
