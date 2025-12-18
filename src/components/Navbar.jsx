@@ -175,9 +175,9 @@ export default function Navbar() {
           <div className={`${theme === 'light' ? 'bg-white' : 'bg-slate-900'} absolute right-0 top-0 h-full w-72 p-4 flex flex-col shadow-2xl rounded-l-3xl border-l ${theme === 'light' ? 'border-slate-200' : 'border-slate-700'}`}>
             <div className="flex items-center justify-between mb-6">
               <span className={`font-bold text-lg ${textColor}`}>Menu</span>
-              <button className="btn btn-ghost btn-sm rounded-lg" onClick={() => setMobileOpen(false)}>✕</button>
+              <button className={`btn btn-ghost btn-sm rounded-lg ${textColor}`} onClick={() => setMobileOpen(false)}>✕</button>
             </div>
-            <ul className="menu gap-2 flex-1 bg-white">
+            <ul className={`menu gap-2 flex-1 rounded-2xl p-1 border ${theme === 'light' ? 'bg-white/95 text-neutral-900 border-slate-200/80' : 'bg-slate-900/95 text-slate-100 border-slate-700'}`}>
               {navLinks.map(link => (
                 <li key={link.to}>
                   <Link to={link.to} className={`${baseLinkClass} rounded-xl`} onClick={() => setMobileOpen(false)}>{link.label}</Link>
